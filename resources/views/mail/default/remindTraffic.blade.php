@@ -19,7 +19,7 @@
                                 尊敬的用户您好！
                                 <br />
                                 <br />
-                                你的流量已经使用95%。为了不造成使用上的影响请合理安排流量的使用。
+                                你的流量已经使用95%，为了不造成使用上的影响，您需要购买重置流量包或升级套餐。您可以点击下方链接进入网站。
                             </td>
                         </tr>
                         <tr style="padding:40px;display:table-cell">
@@ -31,7 +31,7 @@
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
                         <tr>
-                            <td style="padding:20px 40px;font-size:12px;color:#999;line-height:20px;background:#f7f7f7"><a href="{{$url}}" style="font-size:14px;color:#929292">返回{{$name}}</a></td>
+                            <td style="padding:20px 40px;font-size:12px;color:#999;line-height:20px;background:#f7f7f7"><a href="{{$url}}" style="font-size:15px;color:#ff0000">点击进入{{$name}}</a></td>
                         </tr>
                         </tbody>
                     </table>
