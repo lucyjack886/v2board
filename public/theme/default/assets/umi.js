@@ -17248,7 +17248,8 @@
         l.href = u ? "./theme/".concat(c.color, ".css") : "/theme/default/assets/theme/".concat(c.color, ".css"),
         document.getElementsByTagName("head")[0].appendChild(l),
         Object(i["e"])("i18n"))
-            Object(o["setLocale"])(Object(i["e"])("i18n"));
+            // Object(o["setLocale"])(Object(i["e"])("i18n"));
+            Object(o["setLocale"])("zh-CN");
         else
             Object(o["setLocale"])("zh-CN");
             // switch (navigator.language.split("-")[0]) {
