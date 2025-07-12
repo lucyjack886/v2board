@@ -31,6 +31,15 @@ class EPayAlipay {
 
     public function pay($order)
     {
+        $host = $_SERVER['HTTP_HOST'] ?? '';
+        // 如果是 140.238.156.77 域名，则在路径中插入 /xcvpn
+        if ($host === '140.238.156.77') {
+            $order['return_url'] = str_replace(
+                '140.238.156.77/#/',
+                '140.238.156.77/xcvpn/#/',
+                $order['return_url']
+            );
+        }
         $params = [
             'money' => $order['total_amount'] / 100,
             'name' => $order['trade_no'],
