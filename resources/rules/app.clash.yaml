@@ -8,7 +8,8 @@ bind-address: "*"
 mode: rule
 log-level: info
 external-controller: 127.0.0.1:9090
-
+ipv6: true
+prefer-ipv6: true
 proxies:
 
 proxy-groups:
