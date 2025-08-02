@@ -91,13 +91,13 @@ class BEpusdt {
         if ((int)($params['status'] ?? 0) !== 2) {
             return false; // 只处理支付成功状态
         }
+
         return [
             'trade_no'    => $params['order_id'],
-            'callback_no' => $params['trade_id']
+            'callback_no' => $params['trade_id'],
+            'custom_result' => "ok",
         ];
-
-        http_response_code(200);
-        return('ok');
+   
     }
 
     private function sign(array $params, string $key): string
