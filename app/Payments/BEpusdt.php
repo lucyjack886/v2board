@@ -2,7 +2,7 @@
 
 namespace App\Payments;
 
-class Epusdt {
+class BEpusdt {
     public function __construct($config)
     {
         $this->config = $config;
@@ -16,11 +16,21 @@ class Epusdt {
                 'description' => '例如：https://epusdt.com',
                 'type' => 'input',
             ],
+            'trade_type' => [
+                'label' => 'usdt类型',
+                'description' => 'usdt.trc20,usdt.erc20,usdt.polygon',
+                'type' => 'input',
+            ],
+            'rate' => [
+                'label' => '汇率',
+                'description' => '7.3',
+                'type' => 'input',
+            ],
             'key' => [
                 'label' => '接口认证 Token',
                 'description' => '用于签名校验的密钥',
                 'type' => 'input',
-            ]
+            ]   
         ];
     }
 
@@ -39,7 +49,9 @@ class Epusdt {
             'order_id'     => $order['trade_no'],
             'amount'       => round($order['total_amount'] / 100, 2), // 金额以元为单位，保留两位
             'notify_url'   => $order['notify_url'],
-            'redirect_url' => $order['return_url']
+            'redirect_url' => $order['return_url'],
+            'trade_type'   => $this->config['trade_type'],
+            'rate'         => $this->config['rate']
         ];
 
         $params['signature'] = $this->sign($params, $this->config['key']);
@@ -63,11 +75,11 @@ class Epusdt {
         $signature = $params['signature'] ?? '';
         $signParams = [
             'order_id'             => $params['order_id'] ?? '',
+            'trade_id'             => $params['trade_id'] ?? '',
             'amount'               => $params['amount'] ?? '',
             'actual_amount'        => $params['actual_amount'] ?? '',
-            'block_transaction_id' => $params['block_transaction_id'] ?? '',
             'token'                => $params['token'] ?? '',
-            'trade_id'             => $params['trade_id'] ?? '',
+            'block_transaction_id' => $params['block_transaction_id'] ?? '',
             'status'               => $params['status'] ?? '',
         ];
 
@@ -82,7 +94,7 @@ class Epusdt {
 
         return [
             'trade_no'    => $params['order_id'],
-            'callback_no' => $params['block_transaction_id']
+            'callback_no' => $params['trade_id']
         ];
     }
 
