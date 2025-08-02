@@ -4,6 +4,9 @@ namespace App\Payments;
 class EPayWXpay {
     public function __construct($config)
     {
+        if (isset($config['special_hosts']) && is_string($config['special_hosts'])) {
+            $config['special_hosts'] = array_map('trim', explode(',', $config['special_hosts']));
+        }
         $this->config = $config;
     }
 

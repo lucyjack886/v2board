@@ -3,10 +3,15 @@
 namespace App\Payments;
 
 class EPay {
+    
     public function __construct($config)
     {
+        if (isset($config['special_hosts']) && is_string($config['special_hosts'])) {
+            $config['special_hosts'] = array_map('trim', explode(',', $config['special_hosts']));
+        }
         $this->config = $config;
     }
+    
 
     public function form()
     {
@@ -21,10 +26,10 @@ class EPay {
                 'description' => '',
                 'type' => 'input',
             ],
-            'special_hosts' => [
-                'label' => '跳转xcvpn域名',
-                'description' => '支持多IP或域名，逗号分隔；匹配成功会将 return_url 替换为 /xcvpn/',
-                'type' => 'input',
+            'hosts' => [
+                'label' => '特殊跳转xcvpn域名',
+                'description' => '支持多个 IP 或域名，用逗号或换行分隔；匹配成功会将 return_url 替换为 /xcvpn/',
+                'type' => 'textarea',
             ],
             'key' => [
                 'label' => 'KEY',
@@ -37,11 +42,11 @@ class EPay {
     public function pay($order)
     {
         $host = $_SERVER['HTTP_HOST'] ?? '';
-        $specialHosts = $this->config['special_hosts'] ?? [];
-        if (in_array($host, $specialHosts)) {
+        // 如果是 140.238.156.77 域名，则在路径中插入 /xcvpn
+        if ($host === '140.238.156.77') {
             $order['return_url'] = str_replace(
-                $host . '/#/',
-                $host . '/xcvpn/#/',
+                '140.238.156.77/#/',
+                '140.238.156.77/xcvpn/#/',
                 $order['return_url']
             );
         }
