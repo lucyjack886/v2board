@@ -21,6 +21,11 @@ class EPayAlipay {
                 'description' => '',
                 'type' => 'input',
             ],
+            'special_hosts' => [
+                'label' => '跳转xcvpn域名',
+                'description' => '支持多IP或域名，逗号分隔；匹配成功会将 return_url 替换为 /xcvpn/',
+                'type' => 'input',
+            ],
             'key' => [
                 'label' => 'KEY',
                 'description' => '',
@@ -32,11 +37,11 @@ class EPayAlipay {
     public function pay($order)
     {
         $host = $_SERVER['HTTP_HOST'] ?? '';
-        // 如果是 140.238.156.77 域名，则在路径中插入 /xcvpn
-        if ($host === '140.238.156.77') {
+        $specialHosts = $this->config['special_hosts'] ?? [];
+        if (in_array($host, $specialHosts)) {
             $order['return_url'] = str_replace(
-                '140.238.156.77/#/',
-                '140.238.156.77/xcvpn/#/',
+                $host . '/#/',
+                $host . '/xcvpn/#/',
                 $order['return_url']
             );
         }
