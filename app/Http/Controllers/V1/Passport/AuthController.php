@@ -179,15 +179,13 @@ class AuthController extends Controller
             );
         }
 
-        // ✅ 发送欢迎邮件
         SendEmailJob::dispatch([
             'email' => $user->email,
-            'subject' => __('欢迎加入 :name', [
-                'name' => config('v2board.app_name', 'V2Board')
-            ]),
-            'template_name' => 'notify', //notify 模板
+            'subject' => config('v2board.app_name', 'V2Board') . '注册成功通知',
+            'template_name' => 'notify',
             'template_value' => [
                 'name' => config('v2board.app_name', 'V2Board'),
+                'url' => config('v2board.app_url'),
                 'content' => "欢迎注册 " . config('v2board.app_name', 'V2Board') . "！\n\n" .
                             "您已经成功创建账户，可以立即登录并开始使用服务。\n\n" .
                             "如果有问题，您可以在网站右下角咨询AI客服，或者通过工单联系人工客服。"
