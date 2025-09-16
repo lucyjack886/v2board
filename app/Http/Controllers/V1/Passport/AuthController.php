@@ -186,8 +186,10 @@ class AuthController extends Controller
             'template_value' => [
                 'name' => config('v2board.app_name', 'V2Board'),
                 'url' => config('v2board.app_url'),
-                'content' => "您已经成功创建账户，可以立即登录并开始使用服务。\n\n" .
-                            "如果有问题，您可以在网站右下角咨询AI客服，或者通过工单联系人工客服。"
+                'content' => "您已经成功创建账户，可以立即登录并开始使用服务。\n" .
+                            "如有问题，您可以在网站右下角咨询AI客服，或者通过工单联系人工客服。\n" .
+                            "建议使用Chrome、Safari浏览器登录官网\n" .  
+                            "官网地址：".config('v2board.app_url')
             ]
         ]);
 
