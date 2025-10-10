@@ -6717,16 +6717,17 @@
                                                 if (!og) return Promise.resolve({ x:x, r:false, l: 9999 });
                                                 return probe(og).then(function(res){ return { x:x, r:!!res.r, l: res.l|0 }; }).catch(function(){ return { x:x, r:false, l: 9999 }; });
                                             })).then(function(arr){
-                                                arr.sort(function(a,b){
-                                                    var rb = b.r?1:0, ra = a.r?1:0;
-                                                    if (rb !== ra) return rb - ra;
+                                                // filter out unreachable methods
+                                                var reachable = arr.filter(function(z){ return !!z.r; });
+                                                // sort by latency then handling fee percent
+                                                reachable.sort(function(a,b){
                                                     if (a.l !== b.l) return a.l - b.l;
                                                     var ap = (a.x && a.x.handling_fee_percent) || 0;
                                                     var bp = (b.x && b.x.handling_fee_percent) || 0;
                                                     if (ap !== bp) return ap - bp;
                                                     return 0;
                                                 });
-                                                var ordered = arr.map(function(y){ return y.x; });
+                                                var ordered = reachable.map(function(y){ return y.x; });
                                                 o({ type: "setState", payload: { paymentMethod: ordered } });
                                             }).catch(function(){});
                                         }catch(e){}
