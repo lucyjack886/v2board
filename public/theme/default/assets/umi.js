@@ -57493,7 +57493,7 @@
                                     if (d && d.data && d.data.auth_data) {
                                         window.localStorage.setItem("authorization", d.data.auth_data);
                                     }
-                                    s.a.push("/dashboard");
+                                    s.a.push("/plan");
                                 case 14:
                                 case "end":
                                     return n.stop()
