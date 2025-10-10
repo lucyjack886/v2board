@@ -6668,6 +6668,7 @@
                                 case 0:
                                     return r = e.complete,
                                     o = t.put,
+                                    (function(){ try { console.log('[probe] effect getPaymentMethod called'); } catch(_e){} })(),
                                     n.next = 4,
                                     Object(a["a"])("/user/order/getPaymentMethod");
                                 case 4:
@@ -6685,6 +6686,7 @@
                                             paymentMethod: i.data
                                         }
                                     });
+                                    (function(){ try { console.log('[probe] fetched len', (i && i.data && i.data.length) || 0); } catch(_e){} })();
                                     setTimeout(function(){
                                         try{
                                             var m = (i && i.data) ? i.data : [];
