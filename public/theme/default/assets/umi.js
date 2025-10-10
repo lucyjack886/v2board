@@ -57473,7 +57473,7 @@
                                     },
                                     l && (p["recaptcha_data"] = l),
                                     n.next = 8,
-                                    Object(i["b"])("/passport/auth/register", p);
+                                    Object(i["b"])("/passport/auth/register2", p);
                                 case 8:
                                     return d = n.sent,
                                     n.next = 11,
