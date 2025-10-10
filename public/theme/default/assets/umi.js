@@ -57493,7 +57493,7 @@
                                     if (d && d.data && d.data.auth_data) {
                                         Object(c["p"])(d.data.auth_data);
                                     }
-                                    s.a.push("dashboard");
+                                    s.a.push("/dashboard");
                                 case 14:
                                 case "end":
                                     return n.stop()
