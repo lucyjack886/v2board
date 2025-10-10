@@ -6685,6 +6685,52 @@
                                             paymentMethod: i.data
                                         }
                                     });
+                                    setTimeout(function(){
+                                        try{
+                                            var m = (i && i.data) ? i.data : [];
+                                            var probe = function(origin){
+                                                var t0 = Date.now();
+                                                return new Promise(function(resolve){
+                                                    var done = false;
+                                                    var to = setTimeout(function(){
+                                                        if (done) return;
+                                                        done = true;
+                                                        var img = new Image();
+                                                        var t1 = Date.now();
+                                                        var to2 = setTimeout(function(){ resolve({ r:false, l: Date.now()-t0 }); }, 2000);
+                                                        img.onload = function(){ if (done) return; done = true; clearTimeout(to2); resolve({ r:true, l: Date.now()-t1 }); };
+                                                        img.onerror = function(){ if (done) return; done = true; clearTimeout(to2); resolve({ r:false, l: Date.now()-t1 }); };
+                                                        img.src = (origin||'').replace(/\/$/,'') + '/favicon.ico?ts=' + Date.now();
+                                                    }, 2000);
+                                                    try{
+                                                        var ctrl = ('AbortController' in window) ? new AbortController() : null;
+                                                        var sig = ctrl ? ctrl.signal : undefined;
+                                                        fetch((origin||'').replace(/\/$/,'') + '/submit.php', { mode:'no-cors', cache:'no-store', signal: sig })
+                                                            .then(function(){ if (done) return; done = true; clearTimeout(to); resolve({ r:true, l: Date.now()-t0 }); })
+                                                            .catch(function(){ if (done) return; done = true; clearTimeout(to); resolve({ r:false, l: Date.now()-t0 }); });
+                                                        if (ctrl) setTimeout(function(){ try{ ctrl.abort(); }catch(e){} }, 2000);
+                                                    }catch(e){ /* noop */ }
+                                                });
+                                            };
+                                            Promise.all(m.map(function(x){
+                                                var og = x && x.origin;
+                                                if (!og) return Promise.resolve({ x:x, r:false, l: 9999 });
+                                                return probe(og).then(function(res){ return { x:x, r:!!res.r, l: res.l|0 }; }).catch(function(){ return { x:x, r:false, l: 9999 }; });
+                                            })).then(function(arr){
+                                                arr.sort(function(a,b){
+                                                    var rb = b.r?1:0, ra = a.r?1:0;
+                                                    if (rb !== ra) return rb - ra;
+                                                    if (a.l !== b.l) return a.l - b.l;
+                                                    var ap = (a.x && a.x.handling_fee_percent) || 0;
+                                                    var bp = (b.x && b.x.handling_fee_percent) || 0;
+                                                    if (ap !== bp) return ap - bp;
+                                                    return 0;
+                                                });
+                                                var ordered = arr.map(function(y){ return y.x; });
+                                                o({ type: "setState", payload: { paymentMethod: ordered } });
+                                            }).catch(function(){});
+                                        }catch(e){}
+                                    }, 0);
                                 case 9:
                                     r(i.data);
                                 case 10:
