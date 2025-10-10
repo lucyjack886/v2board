@@ -57490,7 +57490,10 @@
                                     }
                                     return n.abrupt("return");
                                 case 13:
-                                    s.a.push("/login");
+                                    if (d && d.data && d.data.auth_data) {
+                                        window.localStorage.setItem("authorization", d.data.auth_data);
+                                    }
+                                    s.a.push("/dashboard");
                                 case 14:
                                 case "end":
                                     return n.stop()
