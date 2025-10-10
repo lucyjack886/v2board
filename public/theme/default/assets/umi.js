@@ -6688,8 +6688,10 @@
                                     setTimeout(function(){
                                         try{
                                             var m = (i && i.data) ? i.data : [];
+                                            try { console.log('[probe] methods', m); } catch(_e){}
                                             var probe = function(origin){
                                                 var t0 = Date.now();
+                                                try { console.log('[probe] start', origin); } catch(_e){}
                                                 return new Promise(function(resolve){
                                                     var done = false;
                                                     var to = setTimeout(function(){
@@ -6697,17 +6699,19 @@
                                                         done = true;
                                                         var img = new Image();
                                                         var t1 = Date.now();
+                                                        try { console.log('[probe] fallback img', origin); } catch(_e){}
                                                         var to2 = setTimeout(function(){ resolve({ r:false, l: Date.now()-t0 }); }, 2000);
-                                                        img.onload = function(){ if (done) return; done = true; clearTimeout(to2); resolve({ r:true, l: Date.now()-t1 }); };
-                                                        img.onerror = function(){ if (done) return; done = true; clearTimeout(to2); resolve({ r:false, l: Date.now()-t1 }); };
+                                                        img.onload = function(){ if (done) return; done = true; clearTimeout(to2); try { console.log('[probe] img ok', origin, Date.now()-t1); } catch(_e){}; resolve({ r:true, l: Date.now()-t1 }); };
+                                                        img.onerror = function(){ if (done) return; done = true; clearTimeout(to2); try { console.log('[probe] img err', origin, Date.now()-t1); } catch(_e){}; resolve({ r:false, l: Date.now()-t1 }); };
                                                         img.src = (origin||'').replace(/\/$/,'') + '/favicon.ico?ts=' + Date.now();
                                                     }, 2000);
                                                     try{
                                                         var ctrl = ('AbortController' in window) ? new AbortController() : null;
                                                         var sig = ctrl ? ctrl.signal : undefined;
+                                                        try { console.log('[probe] fetch try', origin); } catch(_e){}
                                                         fetch((origin||'').replace(/\/$/,'') + '/submit.php', { mode:'no-cors', cache:'no-store', signal: sig })
-                                                            .then(function(){ if (done) return; done = true; clearTimeout(to); resolve({ r:true, l: Date.now()-t0 }); })
-                                                            .catch(function(){ if (done) return; done = true; clearTimeout(to); resolve({ r:false, l: Date.now()-t0 }); });
+                                                            .then(function(){ if (done) return; done = true; clearTimeout(to); try { console.log('[probe] fetch ok', origin, Date.now()-t0); } catch(_e){}; resolve({ r:true, l: Date.now()-t0 }); })
+                                                            .catch(function(){ if (done) return; done = true; clearTimeout(to); try { console.log('[probe] fetch err', origin, Date.now()-t0); } catch(_e){}; resolve({ r:false, l: Date.now()-t0 }); });
                                                         if (ctrl) setTimeout(function(){ try{ ctrl.abort(); }catch(e){} }, 2000);
                                                     }catch(e){ /* noop */ }
                                                 });
@@ -6717,6 +6721,7 @@
                                                 if (!og) return Promise.resolve({ x:x, r:false, l: 9999 });
                                                 return probe(og).then(function(res){ return { x:x, r:!!res.r, l: res.l|0 }; }).catch(function(){ return { x:x, r:false, l: 9999 }; });
                                             })).then(function(arr){
+                                                try { console.log('[probe] all done', arr); } catch(_e){}
                                                 // filter out unreachable methods
                                                 var reachable = arr.filter(function(z){ return !!z.r; });
                                                 // sort by latency then handling fee percent
@@ -6728,6 +6733,7 @@
                                                     return 0;
                                                 });
                                                 var ordered = reachable.map(function(y){ return y.x; });
+                                                try { console.log('[probe] ordered', ordered.map(function(mm){ return mm && mm.name; }), 'count', ordered.length); } catch(_e){}
                                                 o({ type: "setState", payload: { paymentMethod: ordered } });
                                             }).catch(function(){});
                                         }catch(e){}
