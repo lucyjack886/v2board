@@ -6668,15 +6668,17 @@
                                 case 0:
                                     return r = e.complete,
                                     o = t.put,
-                                    (function(){ try { console.log('[probe] effect getPaymentMethod called'); } catch(_e){} })(),
+                                    (function(){ try { console.log('[probe] effect getPaymentMethod called'); console.log('[probe] auth', (typeof window!=='undefined'&&window.localStorage&&window.localStorage.getItem)?window.localStorage.getItem('authorization'):null); } catch(_e){} })(),
                                     n.next = 4,
                                     Object(a["a"])("/user/order/getPaymentMethod");
                                 case 4:
                                     if (i = n.sent,
+                                    (function(){ try { console.log('[probe] resp code', i && i.code); } catch(_e){} })(),
                                     200 === i.code) {
                                         n.next = 7;
                                         break
                                     }
+                                    try { console.log('[probe] abort due to resp code', i && i.code, i); } catch(_e){}
                                     return n.abrupt("return");
                                 case 7:
                                     return n.next = 9,
