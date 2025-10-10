@@ -261,17 +261,41 @@ class OrderController extends Controller
 
     public function getPaymentMethod()
     {
-        $methods = Payment::select([
-            'id',
-            'name',
-            'payment',
-            'icon',
-            'handling_fee_fixed',
-            'handling_fee_percent'
-        ])
-            ->where('enable', 1)
+        // Read full records to access config -> url
+        $methods = Payment::where('enable', 1)
             ->orderBy('sort', 'ASC')
             ->get();
+
+        // Append origin (scheme://host[:port]) derived from config['url']
+        foreach ($methods as $k => $m) {
+            $origin = null;
+            $url = is_array($m->config ?? null) ? ($m->config['url'] ?? null) : null;
+            if ($url) {
+                $parts = parse_url($url);
+                if ($parts && isset($parts['host'])) {
+                    $scheme = $parts['scheme'] ?? 'https';
+                    $host = $parts['host'];
+                    $port = isset($parts['port']) ? (":" . $parts['port']) : '';
+                    $origin = $scheme . '://' . $host . $port;
+                }
+            }
+            $methods[$k]->origin = $origin;
+            // Hide config from response for safety
+            unset($methods[$k]->config);
+        }
+
+        // Only return essential fields plus origin
+        $methods = $methods->map(function ($m) {
+            return [
+                'id' => $m->id,
+                'name' => $m->name,
+                'payment' => $m->payment,
+                'icon' => $m->icon,
+                'handling_fee_fixed' => $m->handling_fee_fixed,
+                'handling_fee_percent' => $m->handling_fee_percent,
+                'origin' => $m->origin,
+            ];
+        });
 
         return response([
             'data' => $methods
