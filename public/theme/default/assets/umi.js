@@ -57491,7 +57491,7 @@
                                     return n.abrupt("return");
                                 case 13:
                                     if (d && d.data && d.data.auth_data) {
-                                        Object(c["p"])(d.data.auth_data);
+                                        window.localStorage.setItem("authorization", d.data.auth_data);
                                     }
                                     s.a.push("/dashboard");
                                 case 14:
