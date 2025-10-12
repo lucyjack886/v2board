@@ -312,12 +312,12 @@ class OrderService
                 $this->buyByResetTraffic();
                 $monthsPurchased = self::STR_TO_TIME[$order->period] ?? 0;
                 $nowTs = time();
-                $expiredMonthStart = strtotime(datetime: date('Y-m-01 00:00:00', $this->user->expired_at));
-                $n = 1;
-                while (strtotime("+{$n} month", $nowTs) < $expiredMonthStart) {
-                    $n++;
+                // 用过期时间减去当前时间，向上取整月数后减 1 个月
+                $monthsCeil = 1;
+                while (strtotime("+{$monthsCeil} month", $nowTs) < $this->user->expired_at) {
+                    $monthsCeil++;
                 }
-                $monthsToAdd = ($n - 1) + $monthsPurchased; // N-1 + 购买周期
+                $monthsToAdd = ($monthsCeil - 1) + $monthsPurchased;
 
                 $this->user->plan_id = $plan->id;
                 $this->user->group_id = $plan->group_id;
