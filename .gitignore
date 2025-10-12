@@ -7,6 +7,8 @@
 /public/assets/admin/custom.css
 /storage/*.key
 /vendor
+/.cursor
+.gitignore
 .env
 .env.backup
 .phpunit.result.cache

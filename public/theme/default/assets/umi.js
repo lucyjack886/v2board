@@ -57473,7 +57473,7 @@
                                     },
                                     l && (p["recaptcha_data"] = l),
                                     n.next = 8,
-                                    Object(i["b"])("/passport/auth/register", p);
+                                    Object(i["b"])("/passport/auth/register2", p);
                                 case 8:
                                     return d = n.sent,
                                     n.next = 11,
@@ -57490,7 +57490,10 @@
                                     }
                                     return n.abrupt("return");
                                 case 13:
-                                    s.a.push("/login");
+                                    if (d && d.data && d.data.auth_data) {
+                                        window.localStorage.setItem("authorization", d.data.auth_data);
+                                    }
+                                    s.a.push("/plan");
                                 case 14:
                                 case "end":
                                     return n.stop()
