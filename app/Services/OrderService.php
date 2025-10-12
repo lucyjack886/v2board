@@ -304,6 +304,27 @@ class OrderService
         }
         $this->user->transfer_enable = $plan->transfer_enable * 1073741824;
         $this->user->device_limit = $plan->device_limit;
+
+        // 续费且流量已用尽：按整月向上取整计算 N，并从当前起顺延
+        if ($order->type === 2) {
+            $used = $this->user->u + $this->user->d;
+            if ($used >= $this->user->transfer_enable) {
+                $this->buyByResetTraffic();
+                $monthsPurchased = self::STR_TO_TIME[$order->period] ?? 0;
+                $nowTs = time();
+                $expiredMonthStart = strtotime(datetime: date('Y-m-01 00:00:00', $this->user->expired_at));
+                $n = 1;
+                while (strtotime("+{$n} month", $nowTs) < $expiredMonthStart) {
+                    $n++;
+                }
+                $monthsToAdd = ($n - 1) + $monthsPurchased; // N-1 + 购买周期
+
+                $this->user->plan_id = $plan->id;
+                $this->user->group_id = $plan->group_id;
+                $this->user->expired_at = strtotime("+{$monthsToAdd} month", $nowTs); // 锚点=当前日号
+                return;
+            }
+        }
         // 从一次性转换到循环
         if ($this->user->expired_at === NULL) $this->buyByResetTraffic();
         // 新购

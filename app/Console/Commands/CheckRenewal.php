@@ -90,6 +90,22 @@ class CheckRenewal extends Command
                     $order->type = 2;
                     
                     $user->balance = $user->balance - $plan[$latestPeriod];
+                    // 流量用尽：清零并从当前时间按整月向上取整规则起算到期；否则沿用原到期顺延
+                    if (($user->u + $user->d) >= $user->transfer_enable) {
+                        $user->u = 0;
+                        $user->d = 0;
+                        $monthsPurchased = OrderService::STR_TO_TIME[$latestPeriod] ?? 0;
+                        $nowTs = time();
+                        $expiredMonthStart = strtotime(date('Y-m-01 00:00:00', $user->expired_at));
+                        $n = 1;
+                        while (strtotime("+{$n} moth", $nowTs) < $expiredMonthStart) {
+                            $n++;
+                        }
+                        $monthsToAdd = ($n - 1) + $monthsPurchased; // N-1 + 购买周期
+                        $user->expired_at = strtotime("+{$monthsToAdd} month", $nowTs);
+                    } else {
+                        $user->expired_at = $this->getTime($latestPeriod, $user->expired_at);
+                    }
                     $user->expired_at = $this->getTime($latestPeriod, $user->expired_at);
                     if (!$user->save()) {
                         DB::rollback();
