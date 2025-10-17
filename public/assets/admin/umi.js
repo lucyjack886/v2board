@@ -70902,6 +70902,13 @@
                     key: "commission_balance",
                     sorter: !0
                 }, {
+                    title: "\u9080\u8bf7\u4eba\u90ae\u7bb1",
+                    dataIndex: "invite_user_email",
+                    key: "invite_user_email",
+                    render: e=>{
+                        return e || "-"
+                    }
+                }, {
                     title: "\u52a0\u5165\u65f6\u95f4",
                     dataIndex: "created_at",
                     key: "created_at",

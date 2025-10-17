@@ -77,6 +77,16 @@ class UserController extends Controller
         $res = $userModel->forPage($current, $pageSize)
             ->get();
         $plan = Plan::get();
+        
+        // 批量查询邀请人信息
+        $inviteUserIds = $res->pluck('invite_user_id')->filter()->unique()->toArray();
+        $inviteUsers = [];
+        if (!empty($inviteUserIds)) {
+            $inviteUsers = User::whereIn('id', $inviteUserIds)
+                ->get(['id', 'email'])
+                ->keyBy('id');
+        }
+        
         for ($i = 0; $i < count($res); $i++) {
             for ($k = 0; $k < count($plan); $k++) {
                 if ($plan[$k]['id'] == $res[$i]['plan_id']) {
@@ -101,6 +111,13 @@ class UserController extends Controller
             $res[$i]['alive_ip'] = $countalive;
             $res[$i]['ips'] = implode(', ', $ips);
             $res[$i]['subscribe_url'] = Helper::getSubscribeUrl($res[$i]['token']);
+            
+            // 附加邀请人邮箱
+            if ($res[$i]['invite_user_id'] && isset($inviteUsers[$res[$i]['invite_user_id']])) {
+                $res[$i]['invite_user_email'] = $inviteUsers[$res[$i]['invite_user_id']]->email;
+            } else {
+                $res[$i]['invite_user_email'] = null;
+            }
         }
         return response([
             'data' => $res,
