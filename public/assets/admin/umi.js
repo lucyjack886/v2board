@@ -6428,7 +6428,7 @@
                     placeholder: "https://xxxx.com/xxx.apk",
                     defaultValue: w.android_download_url,
                     onChange: e=>this.set("app", "android_download_url", e.target.value)
-                })))))), f.a.createElement(m, {
+                })), f.a.createElement(m, {
                     title: "iOS",
                     description: "iOS\u7aef\u7248\u672c\u53f7\u53ca\u4e0b\u8f7d\u5730\u5740"
                 }, f.a.createElement("input", {
@@ -6458,7 +6458,7 @@
                     placeholder: "https://xxxx.com/xxx.AppImage",
                     defaultValue: w.linux_download_url,
                     onChange: e=>this.set("app", "linux_download_url", e.target.value)
-                })))
+                })))))))
             }
         }
         t["default"] = Object(p["c"])(e=>{
