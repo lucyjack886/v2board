@@ -10,6 +10,11 @@ class CommController extends Controller
 {
     public function config()
     {
+        // 获取当前主题的自定义页脚HTML
+        $theme = config('v2board.frontend_theme', 'default');
+        $themeConfig = config("theme.{$theme}");
+        $customHtml = isset($themeConfig['custom_html']) ? $themeConfig['custom_html'] : '';
+
         return response([
             'data' => [
                 'tos_url' => config('v2board.tos_url'),
@@ -20,9 +25,11 @@ class CommController extends Controller
                     : 0,
                 'is_recaptcha' => (int)config('v2board.recaptcha_enable', 0) ? 1 : 0,
                 'recaptcha_site_key' => config('v2board.recaptcha_site_key'),
+                'app_name' => config('v2board.app_name', 'V2Board'),
                 'app_description' => config('v2board.app_description'),
                 'app_url' => config('v2board.app_url'),
                 'logo' => config('v2board.logo'),
+                'custom_html' => $customHtml,
             ]
         ]);
     }
