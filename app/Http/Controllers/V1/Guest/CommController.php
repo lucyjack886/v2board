@@ -29,6 +29,7 @@ class CommController extends Controller
                 'app_description' => config('v2board.app_description'),
                 'app_url' => config('v2board.app_url'),
                 'logo' => config('v2board.logo'),
+                'invite_link' => config('v2board.invite_link'),
                 'custom_html' => $customHtml,
             ]
         ]);

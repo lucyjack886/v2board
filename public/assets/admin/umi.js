@@ -6065,6 +6065,15 @@
                     checked: parseInt(n.invite_never_expire),
                     onChange: e=>this.set("invite", "invite_never_expire", e ? 1 : 0)
                 })), f.a.createElement(m, {
+                    title: "Invite Link",
+                    description: "Public invite entry URL"
+                }, f.a.createElement("input", {
+                    type: "text",
+                    className: "form-control",
+                    placeholder: "Please enter full URL",
+                    defaultValue: n.invite_link,
+                    onChange: e=>this.set("invite", "invite_link", e.target.value)
+                })), f.a.createElement(m, {
                     title: "\u4f63\u91d1\u4ec5\u9996\u6b21\u53d1\u653e",
                     description: "\u5f00\u542f\u540e\u88ab\u9080\u8bf7\u4eba\u9996\u6b21\u652f\u4ed8\u65f6\u624d\u4f1a\u4ea7\u751f\u4f63\u91d1\uff0c\u53ef\u4ee5\u5728\u7528\u6237\u7ba1\u7406\u5bf9\u7528\u6237\u8fdb\u884c\u5355\u72ec\u914d\u7f6e\u3002"
                 }, f.a.createElement(l["a"], {
