@@ -75,10 +75,17 @@ class OrderController extends Controller
 
     public function save(OrderSave $request)
     {
-        $userService = new UserService();
-        if ($userService->isNotCompleteOrderByUserId($request->user['id'])) {
-            abort(500, __('You have an unpaid or pending order, please try again later or cancel it'));
+        // Check if there's an unpaid or pending order
+        $existingOrder = Order::whereIn('status', [0, 1])
+            ->where('user_id', $request->user['id'])
+            ->first();
+        if ($existingOrder) {
+            return response([
+                'data' => $existingOrder->trade_no,
+                'code' => 400,
+            ]);
         }
+        $userService = new UserService();
         if ($request->input('plan_id') == 0) {
             $amount = $request->input('deposit_amount');
             if ($amount <= 0) {
