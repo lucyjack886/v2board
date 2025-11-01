@@ -44968,6 +44968,7 @@
                                 switch (e.prev = e.next) {
                                 case 0:
                                     Object(u["o"])(),
+                                    window.localStorage.removeItem("account"),
                                     c.a.push("/login");
                                 case 2:
                                 case "end":
@@ -57431,6 +57432,7 @@
                                     return n.abrupt("return");
                                 case 11:
                                     return Object(c["p"])(f.data.auth_data),
+                                    window.localStorage.setItem("account", r),
                                     n.next = 14,
                                     l({
                                         type: "user/getUserInfo"
@@ -57492,6 +57494,7 @@
                                 case 13:
                                     if (d && d.data && d.data.auth_data) {
                                         window.localStorage.setItem("authorization", d.data.auth_data);
+                                        window.localStorage.setItem("account", r);
                                     }
                                     s.a.push("/plan");
                                 case 14:
