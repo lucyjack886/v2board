@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\DB;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,5 +25,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->app['view']->addNamespace('theme', public_path() . '/theme');
+        if (defined('isWEBMAN') && isWEBMAN) {
+            app()->terminating(function () {
+                try {
+                    while (DB::transactionLevel() > 0) DB::rollBack();
+                } catch (\Throwable $e) {}
+                DB::disconnect();
+            });
+        }
     }
 }
