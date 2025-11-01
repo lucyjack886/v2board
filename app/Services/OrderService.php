@@ -253,10 +253,14 @@ class OrderService
     {
         $order = $this->order;
         if ($order->status !== 0) return true;
-        $order->status = 1;
-        $order->paid_at = time();
-        $order->callback_no = $callbackNo;
-        if (!$order->save()) return false;
+        $affected = Order::where('id', $order->id)
+            ->where('status', 0)
+            ->update([
+                'status' => 1,
+                'paid_at' => time(),
+                'callback_no' => $callbackNo
+            ]);
+        if ($affected === 0) return true;
         try {
             OrderHandleJob::dispatch($order->trade_no);
         } catch (\Exception $e) {
@@ -269,8 +273,10 @@ class OrderService
     {
         $order = $this->order;
         DB::beginTransaction();
-        $order->status = 2;
-        if (!$order->save()) {
+        $affected = Order::where('id', $order->id)
+            ->where('status', 0)
+            ->update(['status' => 2]);
+        if ($affected === 0) {
             DB::rollBack();
             return false;
         }
