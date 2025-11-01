@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 use Facade\Ignition\Exceptions\ViewException;
@@ -56,6 +57,9 @@ class Handler extends ExceptionHandler
         if ($exception instanceof ViewException) {
             abort(500, "主题渲染失败。如更新主题，参数可能发生变化请重新配置主题后再试。");
         }
+        try {
+            while (DB::transactionLevel() > 0) DB::rollBack();
+        } catch (\Throwable $e) {}
         return parent::render($request, $exception);
     }
 
