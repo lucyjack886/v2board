@@ -53,7 +53,7 @@ class TicketController extends Controller
     {
         try {
             DB::beginTransaction();
-            if ((int)Ticket::where('status', 0)->where('user_id', $request->user['id'])->lockForUpdate()->count()) {
+            if (Ticket::where('status', 0)->where('user_id', $request->user['id'])->exists()) {
                 throw new \Exception(__('There are other unresolved tickets'));
             }
 
