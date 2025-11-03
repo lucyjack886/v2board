@@ -313,6 +313,7 @@ class ClashVerge
             'password' => $password,
             'client-fingerprint' => 'chrome',
             'udp' => true,
+            'tfo' => true,
             'alpn' => [
                 'h2',
                 'http/1.1',
