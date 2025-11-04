@@ -279,7 +279,18 @@ class OrderController extends Controller
             ->where('enable', 1)
             ->orderBy('sort', 'ASC')
             ->get();
-
+        // hydrate url from config without exposing full config
+        $ids = $methods->pluck('id')->all();
+        if (!empty($ids)) {
+            $configs = Payment::select(['id', 'config'])
+                ->whereIn('id', $ids)
+                ->get()
+                ->keyBy('id');
+            foreach ($methods as $k => $v) {
+                $cfg = isset($configs[$v->id]) ? $configs[$v->id]->config : null;
+                $methods[$k]['url'] = isset($cfg['url']) ? $cfg['url'] : null;
+            }
+        }
         return response([
             'data' => $methods
         ]);
