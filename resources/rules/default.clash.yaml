@@ -30,7 +30,8 @@ dns:
     - 119.29.29.29
     - 114.114.114.114
   fallback:
-    - https://q.1151118.xyz/dns-query
+    - 1.1.1.1
+    - 8.8.8.8
   fallback-filter:
     geoip: true
     geoip-code: CN
