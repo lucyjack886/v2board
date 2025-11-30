@@ -12,8 +12,8 @@ external-controller: 127.0.0.1:9090
 dns:
   enable: true
   # listen: 0.0.0.0:53
-  ipv6: true
-  prefer-ipv6: true
+  ipv6: false
+  prefer-ipv6: false
 
   default-nameserver:
     - 223.5.5.5
@@ -26,12 +26,11 @@ dns:
   proxy-server-nameserver:
     - https://q.1151118.xyz/dns-query
   nameserver:
-    - https://q.1151118.xyz/dns-query  
     - 223.5.5.5
     - 119.29.29.29
     - 114.114.114.114
   fallback:
-    - https://q.1151118.xyz/dns-query    
+    - https://q.1151118.xyz/dns-query
     - 1.1.1.1
     - 8.8.8.8
   fallback-filter:
