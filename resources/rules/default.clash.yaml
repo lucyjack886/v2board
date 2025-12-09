@@ -9,11 +9,17 @@ mode: rule
 log-level: info
 external-controller: 127.0.0.1:9090
 
+mux:
+  enable: true
+  max-connections: 8
+  min-streams: 4
+  padding: true
+
 dns:
   enable: true
   # listen: 0.0.0.0:53
-  ipv6: true
-  prefer-ipv6: true
+  ipv6: false
+  prefer-ipv6: false
 
   default-nameserver:
     - 223.5.5.5
@@ -24,9 +30,8 @@ dns:
   use-hosts: true
   respect-rules: true
   proxy-server-nameserver:
-    - 223.5.5.5
-    - 119.29.29.29
-    - 114.114.114.114
+    - https://q.1151118.xyz/dns-query
+    - https://doh.xiyou.us/dns-query
   nameserver:
     - 223.5.5.5
     - 119.29.29.29
@@ -56,6 +61,13 @@ proxy-groups:
 
 rules:
   # 自定义规则
+  - DOMAIN-KEYWORD,xcvpn,$app_name
+  - DOMAIN-KEYWORD,xiyou,$app_name
+  - DOMAIN-KEYWORD,flybird,$app_name
+  - DOMAIN-KEYWORD,ipleak,$app_name
+  - DOMAIN-SUFFIX,1151119.xyz,$app_name
+  - DOMAIN-SUFFIX,qingqiu.host,$app_name
+
   ## 您可以在此处插入您补充的自定义规则（请注意保持缩进）
   - IP-CIDR,1.1.1.1/32,$app_name,no-resolve
   - IP-CIDR,8.8.8.8/32,$app_name,no-resolve
