@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Mail;
 
 class ConfigController extends Controller
 {
@@ -111,10 +110,13 @@ class ConfigController extends Controller
                 'plan_change_enable' => (int)config('v2board.plan_change_enable', 1),
                 'reset_traffic_method' => (int)config('v2board.reset_traffic_method', 0),
                 'surplus_enable' => (int)config('v2board.surplus_enable', 1),
+                'allow_new_period' => (int)config('v2board.allow_new_period', 0),
                 'new_order_event_id' => (int)config('v2board.new_order_event_id', 0),
                 'renew_order_event_id' => (int)config('v2board.renew_order_event_id', 0),
                 'change_order_event_id' => (int)config('v2board.change_order_event_id', 0),
-                'show_info_to_server_enable' => (int)config('v2board.show_info_to_server_enable', 0)
+                'show_info_to_server_enable' => (int)config('v2board.show_info_to_server_enable', 0),
+                'show_subscribe_method' => (int)config('v2board.show_subscribe_method', 0),
+                'show_subscribe_expire' => (int)config('v2board.show_subscribe_expire', 5),
             ],
             'frontend' => [
                 'frontend_theme' => config('v2board.frontend_theme', 'v2board'),
@@ -124,9 +126,12 @@ class ConfigController extends Controller
                 'frontend_background_url' => config('v2board.frontend_background_url'),
             ],
             'server' => [
+                'server_api_url' => config('v2board.server_api_url'),
                 'server_token' => config('v2board.server_token'),
                 'server_pull_interval' => config('v2board.server_pull_interval', 60),
                 'server_push_interval' => config('v2board.server_push_interval', 60),
+                'server_node_report_min_traffic' => config('v2board.server_node_report_min_traffic', 0),
+                'server_device_online_min_traffic' => config('v2board.server_device_online_min_traffic', 0),
                 'device_limit_mode' => config('v2board.device_limit_mode', 0)
             ],
             'email' => [
