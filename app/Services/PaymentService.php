@@ -47,7 +47,7 @@ class PaymentService
 
         return $this->payment->pay([
             'notify_url' => $notifyUrl,
-            'return_url' => url("/api/v1/guest/payment/return/{$this->method}/{$this->config['uuid']}");,
+            'return_url' => url("/api/v1/guest/payment/return/{$this->method}/{$this->config['uuid']}"),
             'trade_no' => $order['trade_no'],
             'total_amount' => $order['total_amount'],
             'user_id' => $order['user_id'],
