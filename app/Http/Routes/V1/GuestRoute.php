@@ -15,6 +15,7 @@ class GuestRoute
             $router->post('/telegram/webhook', 'V1\\Guest\\TelegramController@webhook');
             // Payment
             $router->match(['get', 'post'], '/payment/notify/{method}/{uuid}', 'V1\\Guest\\PaymentController@notify');
+            $router->get('/payment/return/{method}/{uuid}', 'V1\\Guest\\PaymentController@callback');
             // Comm
             $router->get ('/comm/config', 'V1\\Guest\\CommController@config');
             // Plan - 公开查询计划
