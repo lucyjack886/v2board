@@ -44,10 +44,7 @@ class PaymentService
             $parseUrl = parse_url($notifyUrl);
             $notifyUrl = $this->config['notify_domain'] . $parseUrl['path'];
         }
-
-        $returnUrl = url("/api/v1/guest/payment/return/{$this->method}/{$this->config['uuid']}");
-        $returnUrl = str_replace('http://', 'https://', $returnUrl);
-
+        $returnUrl = 'https://' . $_SERVER['HTTP_HOST'] . "/api/v1/guest/payment/return/{$this->method}/{$this->config['uuid']}";
         return $this->payment->pay([
             'notify_url' => $notifyUrl,
             'return_url' => $returnUrl,
