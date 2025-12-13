@@ -45,15 +45,9 @@ class PaymentService
             $notifyUrl = $this->config['notify_domain'] . $parseUrl['path'];
         }
 
-        $returnUrl = url("/api/v1/guest/payment/return/{$this->method}/{$this->config['uuid']}");
-        if ($this->config['notify_domain']) {
-            $parseUrl = parse_url($returnUrl);
-            $returnUrl = $this->config['notify_domain'] . $parseUrl['path'];
-        }
-
         return $this->payment->pay([
             'notify_url' => $notifyUrl,
-            'return_url' => $returnUrl,
+            'return_url' => url("/api/v1/guest/payment/return/{$this->method}/{$this->config['uuid']}");,
             'trade_no' => $order['trade_no'],
             'total_amount' => $order['total_amount'],
             'user_id' => $order['user_id'],
