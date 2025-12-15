@@ -26,6 +26,21 @@ class PaymentController extends Controller
         }
     }
 
+    public function callback($method, $uuid, Request $request)
+    {
+        try {
+            $paymentService = new PaymentService($method, null, $uuid);
+            $verify = $paymentService->notify($request->input());
+            if (!$verify) abort(500, 'verify error');
+            if (!$this->handle($verify['trade_no'], $verify['callback_no'])) {
+                abort(500, 'handle error');
+            }
+            return redirect('/orders/' . $verify['trade_no']);
+        } catch (\Exception $e) {
+            return redirect('/orders');
+        }
+    }
+
     private function handle($tradeNo, $callbackNo)
     {
         $order = Order::where('trade_no', $tradeNo)->first();

@@ -4,6 +4,7 @@ namespace App\Services;
 
 
 use App\Models\Payment;
+use Illuminate\Support\Facades\Log;
 
 class PaymentService
 {
@@ -44,10 +45,11 @@ class PaymentService
             $parseUrl = parse_url($notifyUrl);
             $notifyUrl = $this->config['notify_domain'] . $parseUrl['path'];
         }
-
+        $returnUrl = 'https://' . $_SERVER['HTTP_HOST'] . "/api/v1/guest/payment/return/{$this->method}/{$this->config['uuid']}";
+        Log::info('Payment Return URL: ' . $returnUrl);
         return $this->payment->pay([
             'notify_url' => $notifyUrl,
-            'return_url' => url('/#/order/' . $order['trade_no']),
+            'return_url' => $returnUrl,
             'trade_no' => $order['trade_no'],
             'total_amount' => $order['total_amount'],
             'user_id' => $order['user_id'],
