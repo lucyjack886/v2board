@@ -2,6 +2,11 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+if (file_exists(__DIR__ . '/.env')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+    $dotenv->load();
+}
+
 use Adapterman\Adapterman;
 use Workerman\Worker;
 use Illuminate\Support\Facades\Cache;
@@ -14,7 +19,8 @@ Adapterman::init();
 
 $ncpu = substr_count((string)@file_get_contents('/proc/cpuinfo'), "\nprocessor")+1;
 
-$http_worker                = new Worker('http://127.0.0.1:6600');
+$port = $_ENV['WEBMAN_PORT'] ?? 6600;
+$http_worker                = new Worker("http://127.0.0.1:{$port}");
 $http_worker->count         = $ncpu * 2;
 $http_worker->name          = 'AdapterMan';
 
