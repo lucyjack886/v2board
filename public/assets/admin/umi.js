@@ -6001,6 +6001,12 @@
                     checked: parseInt(r.show_info_to_server_enable),
                     onChange: e=>this.set("subscribe", "show_info_to_server_enable", e ? 1 : 0)
                 })), f.a.createElement(m, {
+                    title: "\u662f\u5426\u663e\u793a\u8ba2\u9605\u5730\u5740",
+                    description: "\u53ea\u5f71\u54cd\u7528\u6237\u5b89\u5168\u91cd\u7f6e\u65f6\u662f\u5426\u8fd4\u56de\u8ba2\u9605\u5730\u5740\uff0c\u5176\u4ed6\u573a\u666f\u4e0d\u53d7\u5f71\u54cd\u3002"
+                }, f.a.createElement(l["a"], {
+                    checked: parseInt(r.show_subscribe_url),
+                    onChange: e=>this.set("subscribe", "show_subscribe_url", e ? 1 : 0)
+                })), f.a.createElement(m, {
                     title: "\u8ba2\u9605\u94fe\u63a5\u751f\u6548\u6a21\u5f0f",
                     description: "\u7528\u6237\u83b7\u53d6\u8ba2\u9605\u94fe\u63a5\u540e\u7684\u6709\u6548\u671f\u3002"
                 }, f.a.createElement("select", {

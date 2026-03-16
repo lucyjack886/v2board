@@ -380,7 +380,7 @@ class UserController extends Controller
             abort(500, __('Reset failed'));
         }
         return response([
-            'data' => Helper::getSubscribeUrl($user['token'])
+            'data' => config('v2board.show_subscribe_url', 1) ? Helper::getSubscribeUrl($user['token']) : null
         ]);
     }
 

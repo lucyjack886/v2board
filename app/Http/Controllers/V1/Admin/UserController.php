@@ -211,7 +211,7 @@ class UserController extends Controller
             $deviceLimit = $user['devce_limit'] ? $user['devce_limit'] : NULL;
             $notUseFlow = (($user['transfer_enable'] - ($user['u'] + $user['d'])) / 1073741824) ?? 0;
             $planName = $user['plan_name'] ?? '无订阅';
-            $subscribeUrl =  Helper::getSubscribeUrl($user['token']);
+            $subscribeUrl = Helper::getSubscribeUrl($user['token']);
             $data .= "{$user['email']},{$balance},{$commissionBalance},{$transferEnable}, {$deviceLimit}, {$notUseFlow},{$expireDate},{$planName},{$subscribeUrl}\r\n";
 
         }
