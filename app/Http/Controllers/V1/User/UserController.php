@@ -104,10 +104,18 @@ class UserController extends Controller
             'ip' => $ip,
             'created_at' => time()
         ], $ttl);
+        $subscribeUrls = explode(',', config('v2board.subscribe_url'));
+        $subscribeUrl = $subscribeUrls[rand(0, count($subscribeUrls) - 1)] ?? null;
+        $path = '/api/v1/user/subscribe/getUrlByTicket?ticket=' . $ticket;
+        if ($subscribeUrl) {
+            $nextUrl = rtrim($subscribeUrl, '/') . $path;
+        } else {
+            $nextUrl = url($path);
+        }
         return response([
             'data' => [
-                'ticket' => $ticket,
-                'expire_in' => $ttl
+                'expire_in' => $ttl,
+                'next_url' => $nextUrl
             ]
         ]);
     }
