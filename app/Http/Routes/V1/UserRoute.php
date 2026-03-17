@@ -64,7 +64,7 @@ class UserRoute
             $router->get ('/stat/getTrafficLog', 'V1\\User\\StatController@getTrafficLog');
             // Subscribe security
             $router->post('/subscribe/createTicket', 'V1\\User\\UserController@createSubscribeTicket');
-            $router->post('/subscribe/getUrlByTicket', 'V1\\User\\UserController@getSubscribeUrlByTicket');
+            $router->get('/subscribe/getUrlByTicket', 'V1\\User\\UserController@getSubscribeUrlByTicket');
         });
     }
 }
