@@ -54,6 +54,11 @@ class ClientController extends Controller
         }
     }
 
+    public function secureSubscribe(Request $request)
+    {
+        return $this->subscribe($request);
+    }
+
     private function setSubscribeInfoToServers(&$servers, $user)
     {
         if (!isset($servers[0])) return;

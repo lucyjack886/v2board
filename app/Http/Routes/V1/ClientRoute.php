@@ -19,5 +19,12 @@ class ClientRoute
             $router->get('/app/getConfig', 'V1\\Client\\AppController@getConfig');
             $router->get('/app/getVersion', 'V1\\Client\\AppController@getVersion');
         });
+
+        $router->group([
+            'prefix' => 'client',
+            'middleware' => 'clientSecure'
+        ], function ($router) {
+            $router->get('/secureSubscribe', 'V1\\Client\\ClientController@secureSubscribe');
+        });
     }
 }

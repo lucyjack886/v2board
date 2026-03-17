@@ -87,6 +87,79 @@ class UserController extends Controller
         ]);
     }
 
+    public function createSubscribeTicket(Request $request)
+    {
+        $userId = $request->user['id'] ?? null;
+        if (!$userId) {
+            abort(403, 'user not found');
+        }
+        $ticket = Helper::base64EncodeUrlSafe(random_bytes(24));
+        $ip = Helper::getClientIp();
+        $ttl = (int)config('v2board.subscribe_ticket_ttl', 60);
+        if ($ttl <= 0) {
+            $ttl = 60;
+        }
+        Cache::put("sub_ticket:{$ticket}", [
+            'user_id' => $userId,
+            'ip' => $ip,
+            'created_at' => time()
+        ], $ttl);
+        return response([
+            'data' => [
+                'ticket' => $ticket,
+                'expire_in' => $ttl
+            ]
+        ]);
+    }
+
+    public function getSubscribeUrlByTicket(Request $request)
+    {
+        $userId = $request->user['id'] ?? null;
+        if (!$userId) {
+            abort(403, 'user not found');
+        }
+        $ticket = $request->input('ticket');
+        if (empty($ticket)) {
+            abort(403, 'ticket is null');
+        }
+        $record = Cache::pull("sub_ticket:{$ticket}");
+        if (!$record) {
+            abort(403, 'ticket is invalid or expired');
+        }
+        if ((int)$record['user_id'] !== (int)$userId) {
+            abort(403, 'ticket user mismatch');
+        }
+        $submethod = (int)config('v2board.show_subscribe_method', 0);
+        if ($submethod !== 1) {
+            abort(500, 'secure subscribe only supports otp mode');
+        }
+        $user = User::find($userId);
+        if (!$user) {
+            abort(500, __('The user does not exist'));
+        }
+        $subscribeUrl = Helper::getSecureSubscribeUrl($user->token);
+        $externalToken = Cache::get("otp_{$user->token}");
+        if (!$externalToken) {
+            abort(500, 'failed to create external token');
+        }
+        $ip = Helper::getClientIp();
+        $ttl = (int)config('v2board.secure_subscribe_ip_ttl', 300);
+        if ($ttl <= 0) {
+            $ttl = 300;
+        }
+        Cache::put("sub_ip:{$externalToken}", [
+            'ip' => $ip,
+            'user_id' => $userId,
+            'created_at' => time()
+        ], $ttl);
+        return response([
+            'data' => [
+                'url' => $subscribeUrl,
+                'expire_in' => $ttl
+            ]
+        ]);
+    }
+
     public function newPeriod(Request $request) 
     {
         if (!config('v2board.allow_new_period', 0)) {
