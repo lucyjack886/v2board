@@ -20,6 +20,7 @@ use App\Utils\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -130,24 +131,46 @@ class UserController extends Controller
         if (empty($ticket)) {
             abort(403, 'ticket is null');
         }
+        Log::info('secure_subscribe:getUrlByTicket start', [
+            'user_id' => $userId,
+            'ticket' => $ticket,
+        ]);
         $record = Cache::pull("sub_ticket:{$ticket}");
         if (!$record) {
+            Log::warning('secure_subscribe:ticket invalid or expired', [
+                'user_id' => $userId,
+                'ticket' => $ticket,
+            ]);
             abort(403, 'ticket is invalid or expired');
         }
         if ((int)$record['user_id'] !== (int)$userId) {
+            Log::warning('secure_subscribe:ticket user mismatch', [
+                'user_id' => $userId,
+                'ticket_user_id' => $record['user_id'] ?? null,
+            ]);
             abort(403, 'ticket user mismatch');
         }
         $submethod = (int)config('v2board.show_subscribe_method', 0);
         if ($submethod !== 1) {
+            Log::error('secure_subscribe:invalid submethod', [
+                'user_id' => $userId,
+                'submethod' => $submethod,
+            ]);
             abort(500, 'secure subscribe only supports otp mode');
         }
         $user = User::find($userId);
         if (!$user) {
+            Log::error('secure_subscribe:user not found', [
+                'user_id' => $userId,
+            ]);
             abort(500, __('The user does not exist'));
         }
         $subscribeUrl = Helper::getSecureSubscribeUrl($user->token);
         $externalToken = Cache::get("otp_{$user->token}");
         if (!$externalToken) {
+            Log::error('secure_subscribe:external token missing', [
+                'user_id' => $userId,
+            ]);
             abort(500, 'failed to create external token');
         }
         $ip = Helper::getClientIp();
@@ -160,6 +183,11 @@ class UserController extends Controller
             'user_id' => $userId,
             'created_at' => time()
         ], $ttl);
+        Log::info('secure_subscribe:getUrlByTicket success', [
+            'user_id' => $userId,
+            'ip' => $ip,
+            'ttl' => $ttl,
+        ]);
         return response([
             'data' => [
                 'url' => $subscribeUrl,
