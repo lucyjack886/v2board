@@ -6001,6 +6001,12 @@
                     checked: parseInt(r.show_info_to_server_enable),
                     onChange: e=>this.set("subscribe", "show_info_to_server_enable", e ? 1 : 0)
                 })), f.a.createElement(m, {
+                    title: "\u662f\u5426\u663e\u793a\u8ba2\u9605\u5730\u5740",
+                    description: "\u53ea\u5f71\u54cd\u7528\u6237\u5b89\u5168\u91cd\u7f6e\u65f6\u662f\u5426\u8fd4\u56de\u8ba2\u9605\u5730\u5740\uff0c\u5176\u4ed6\u573a\u666f\u4e0d\u53d7\u5f71\u54cd\u3002"
+                }, f.a.createElement(l["a"], {
+                    checked: parseInt(r.show_subscribe_url),
+                    onChange: e=>this.set("subscribe", "show_subscribe_url", e ? 1 : 0)
+                })), f.a.createElement(m, {
                     title: "\u8ba2\u9605\u94fe\u63a5\u751f\u6548\u6a21\u5f0f",
                     description: "\u7528\u6237\u83b7\u53d6\u8ba2\u9605\u94fe\u63a5\u540e\u7684\u6709\u6548\u671f\u3002"
                 }, f.a.createElement("select", {
@@ -106338,11 +106344,11 @@
                     value: "vmess"
                 }, "VMess"))), e.protocol != null && e.protocol != "shadowsocks" && y.a.createElement("div", {
                     className: "form-group col-md-6 col-xs-12"
-                }, y.a.createElement("label", null, "\u5b89\u5168\u6027 ", (parseInt(e.tls) != 0 || e.protocol == "anytls" || e.protocol == "hysteria2" || e.protocol == "trojan" || e.protocol == "tuic") && y.a.createElement("a", {
+                }, y.a.createElement("label", null, "\u5b89\u5168\u6027 ", (parseInt(e.tls) != 0 || e.protocol == "hysteria2" || e.protocol == "trojan" || e.protocol == "tuic") && y.a.createElement("a", {
                     href: "javascript:void(0);",
                     onClick: ()=>this.showChildDrawer("\u7f16\u8f91\u5b89\u5168\u6027\u914d\u7f6e", "tls_settings")
                 }, "\u7f16\u8f91\u914d\u7f6e")), y.a.createElement(N["a"], {
-                    value: parseInt(e.tls) || (e.protocol == "anytls" || e.protocol == "hysteria2" || e.protocol == "trojan" || e.protocol == "tuic" ? 1 : 0),
+                    value: parseInt(e.tls) || (e.protocol == "hysteria2" || e.protocol == "trojan" || e.protocol == "tuic" ? 1 : 0),
                     style: {
                         width: "100%"
                     },
@@ -106353,7 +106359,7 @@
                 }, "\u65e0"), y.a.createElement(N["a"].Option, {
                     key: 1,
                     value: 1
-                }, "TLS"), e.protocol == "vless" && y.a.createElement(N["a"].Option, {
+                }, "TLS"), (e.protocol == "vless" || e.protocol == "anytls") && y.a.createElement(N["a"].Option, {
                     key: 2,
                     value: 2
                 }, "Reality")))), e.protocol == "shadowsocks" && y.a.createElement("div", {
@@ -106374,7 +106380,7 @@
                     value: "tcp"
                 }, "TCP"), y.a.createElement(N["a"].Option, {
                     value: "http"
-                }, "HTTP\u4f2a\u88c5")))), e.protocol != null && e.protocol != "hysteria2" && e.protocol != "anytls" && e.protocol != "shadowsocks" && e.protocol != "tuic" && y.a.createElement("div", {
+                }, "HTTP\u4f2a\u88c5")))), e.protocol != null && e.protocol != "hysteria2" && e.protocol != "shadowsocks" && e.protocol != "tuic" && y.a.createElement("div", {
                     className: "row"
                 }, y.a.createElement("div", {
                     className: "form-group col-md-12 col-xs-12"

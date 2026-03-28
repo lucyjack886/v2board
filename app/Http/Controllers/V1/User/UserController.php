@@ -20,6 +20,7 @@ use App\Utils\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -84,6 +85,114 @@ class UserController extends Controller
         $authService->removeAllSession();
         return response([
             'data' => true
+        ]);
+    }
+
+    public function createSubscribeTicket(Request $request)
+    {
+        $userId = $request->user['id'] ?? null;
+        if (!$userId) {
+            abort(403, 'user not found');
+        }
+        $ticket = Helper::base64EncodeUrlSafe(random_bytes(24));
+        $ip = Helper::getClientIp();
+        $ttl = (int)config('v2board.subscribe_ticket_ttl', 60);
+        if ($ttl <= 0) {
+            $ttl = 60;
+        }
+        Cache::put("sub_ticket:{$ticket}", [
+            'user_id' => $userId,
+            'ip' => $ip,
+            'created_at' => time()
+        ], $ttl);
+        $subscribeUrls = explode(',', config('v2board.subscribe_url'));
+        $subscribeUrl = $subscribeUrls[rand(0, count($subscribeUrls) - 1)] ?? null;
+        $path = '/api/v1/user/subscribe/getUrlByTicket?ticket=' . $ticket;
+        if ($subscribeUrl) {
+            $nextUrl = rtrim($subscribeUrl, '/') . $path;
+        } else {
+            $nextUrl = url($path);
+        }
+        return response([
+            'data' => [
+                'expire_in' => $ttl,
+                'next_url' => $nextUrl
+            ]
+        ]);
+    }
+
+    public function getSubscribeUrlByTicket(Request $request)
+    {
+        $userId = $request->user['id'] ?? null;
+        if (!$userId) {
+            abort(403, 'user not found');
+        }
+        $ticket = $request->input('ticket');
+        if (empty($ticket)) {
+            abort(403, 'ticket is null');
+        }
+        Log::info('secure_subscribe:getUrlByTicket start', [
+            'user_id' => $userId,
+            'ticket' => $ticket,
+        ]);
+        $record = Cache::pull("sub_ticket:{$ticket}");
+        if (!$record) {
+            Log::warning('secure_subscribe:ticket invalid or expired', [
+                'user_id' => $userId,
+                'ticket' => $ticket,
+            ]);
+            abort(403, 'ticket is invalid or expired');
+        }
+        if ((int)$record['user_id'] !== (int)$userId) {
+            Log::warning('secure_subscribe:ticket user mismatch', [
+                'user_id' => $userId,
+                'ticket_user_id' => $record['user_id'] ?? null,
+            ]);
+            abort(403, 'ticket user mismatch');
+        }
+        $submethod = (int)config('v2board.show_subscribe_method', 0);
+        if ($submethod !== 1) {
+            Log::error('secure_subscribe:invalid submethod', [
+                'user_id' => $userId,
+                'submethod' => $submethod,
+            ]);
+            abort(500, 'secure subscribe only supports otp mode');
+        }
+        $user = User::find($userId);
+        if (!$user) {
+            Log::error('secure_subscribe:user not found', [
+                'user_id' => $userId,
+            ]);
+            abort(500, __('The user does not exist'));
+        }
+        $subscribeUrl = Helper::getSecureSubscribeUrl($user->token);
+        $externalToken = Cache::get("otp_{$user->token}");
+        if (!$externalToken) {
+            Log::error('secure_subscribe:external token missing', [
+                'user_id' => $userId,
+            ]);
+            abort(500, 'failed to create external token');
+        }
+        $ip = Helper::getClientIp();
+        $ttl = (int)config('v2board.secure_subscribe_ip_ttl', 300);
+        if ($ttl <= 0) {
+            $ttl = 300;
+        }
+        Cache::put("sub_ip:{$externalToken}", [
+            'ip' => $ip,
+            'user_id' => $userId,
+            'created_at' => time()
+        ], $ttl);
+        Log::info('secure_subscribe:getUrlByTicket success', [
+            'user_id' => $userId,
+            'ip' => $ip,
+            'ttl' => $ttl,
+        ]);
+        return response([
+            'data' => [
+                'url' => $subscribeUrl,
+                'expire_in' => $ttl
+            ]
         ]);
     }
 
@@ -380,7 +489,7 @@ class UserController extends Controller
             abort(500, __('Reset failed'));
         }
         return response([
-            'data' => Helper::getSubscribeUrl($user['token'])
+            'data' => config('v2board.show_subscribe_url', 1) ? Helper::getSubscribeUrl($user['token']) : null
         ]);
     }
 

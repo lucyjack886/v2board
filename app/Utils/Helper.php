@@ -97,6 +97,32 @@ class Helper
         }
     }
 
+    public static function getClientIp()
+    {
+        $request = request();
+        $ip = null;
+        $forwardedFor = $request->header('X-Forwarded-For');
+        if (!empty($forwardedFor)) {
+            $parts = explode(',', $forwardedFor);
+            if (isset($parts[0])) {
+                $candidate = trim($parts[0]);
+                if (filter_var($candidate, FILTER_VALIDATE_IP)) {
+                    $ip = $candidate;
+                }
+            }
+        }
+        if ($ip === null) {
+            $realIp = $request->header('X-Real-IP');
+            if (!empty($realIp) && filter_var($realIp, FILTER_VALIDATE_IP)) {
+                $ip = $realIp;
+            }
+        }
+        if ($ip === null) {
+            $ip = $request->getClientIp();
+        }
+        return $ip;
+    }
+
     public static function getSubscribeUrl($token)
     {
         $submethod = (int)config('v2board.show_subscribe_method', 0);
@@ -104,6 +130,48 @@ class Helper
         if (empty($path)) {
             $path = '/api/v1/client/subscribe';
         } 
+        $subscribeUrls = explode(',', config('v2board.subscribe_url'));
+        $subscribeUrl = $subscribeUrls[rand(0, count($subscribeUrls) - 1)];
+        switch ($submethod) {
+            case 0:
+                $path = "{$path}?token={$token}";
+                if ($subscribeUrl) return $subscribeUrl . $path;
+                return url($path);
+                break;
+            case 1:
+                $newtoken = Cache::get("otp_{$token}");
+                if (!$newtoken) {
+                    $newtoken = self::base64EncodeUrlSafe(random_bytes(24));
+                    $added = Cache::add("otp_{$token}", $newtoken, 86400);
+                    if ($added) {
+                        Cache::put("otpn_{$newtoken}", $token, 86400);
+                    } else {
+                        $newtoken = Cache::get("otp_{$token}");
+                    }
+                }
+                $path = "{$path}?token={$newtoken}";
+                if ($subscribeUrl) return $subscribeUrl . $path;
+                return url($path);
+                break;
+            case 2:
+                $timestep = (int)config('v2board.show_subscribe_expire', 5) * 60;
+                $counter = floor(time() / $timestep);
+                $counterBytes = pack('N*', 0) . pack('N*', $counter);
+                $hash = hash_hmac('sha1', $counterBytes, $token, false);
+                $user = User::where('token', $token)->select('id')->first();
+                $newtoken = self::base64EncodeUrlSafe("{$user->id}:{$hash}");
+
+                $path = "{$path}?token={$newtoken}";
+                if ($subscribeUrl) return $subscribeUrl . $path;
+                return url($path);
+                break;
+        }
+    }
+
+    public static function getSecureSubscribeUrl($token)
+    {
+        $submethod = (int)config('v2board.show_subscribe_method', 0);
+        $path = '/api/v1/client/secureSubscribe';
         $subscribeUrls = explode(',', config('v2board.subscribe_url'));
         $subscribeUrl = $subscribeUrls[rand(0, count($subscribeUrls) - 1)];
         switch ($submethod) {
