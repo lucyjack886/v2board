@@ -17,7 +17,8 @@ class NextinEncrypted extends ClashMeta
     public const ENCRYPTION_PASSWORD = 'xingchenPs20_3XbaB';
 
     // Configure how the semantic version is extracted from the UA string.
-    public const VERSION_EXTRACT_REGEX = '/(?:nextin|vtx)[^0-9]*([0-9]+(?:\.[0-9]+)+)/i';
+    // Supports nextin / vtx markers, and BlueBird-prefixed clients (e.g. "BlueBird/1.0.10", "BlueBird 1.0.10").
+    public const VERSION_EXTRACT_REGEX = '/(?:nextin|vtx|bluebird)[^0-9]*([0-9]+(?:\.[0-9]+)+)/i';
 
     // Encrypt only when the parsed client version is greater than or equal to this version.
     public const MIN_CLIENT_VERSION = '1.0.9';
