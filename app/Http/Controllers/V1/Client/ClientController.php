@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\V1\Client;
 
 use App\Http\Controllers\Controller;
-use App\Protocols\General;
+use App\Protocols\General; 
+use App\Protocols\NextinEncrypted;
 use App\Protocols\Singbox\Singbox;
 use App\Protocols\Singbox\SingboxOld;
 use App\Protocols\ClashMeta;
@@ -14,10 +15,12 @@ use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
+
     public function subscribe(Request $request)
     {
+        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
         $flag = $request->input('flag')
-            ?? ($_SERVER['HTTP_USER_AGENT'] ?? '');
+            ?? $userAgent;
         $flag = strtolower($flag);
         $user = $request->user;
         // account not expired and is not banned.
@@ -26,8 +29,29 @@ class ClientController extends Controller
             $serverService = new ServerService();
             $servers = $serverService->getAvailableServers($user);
             if($flag) {
-                if (!strpos($flag, 'sing')) {
+                $nextinEncrypted = new NextinEncrypted($user, $servers);
+                $shouldBlockNextinSubscription =
+                    NextinEncrypted::shouldBlockSubscriptionForUserAgent($userAgent);
+                $shouldReturnEncryptedClashMeta =
+                    NextinEncrypted::shouldEncryptForUserAgent($userAgent)
+                    || strpos($flag, $nextinEncrypted->flag) !== false;
+
+                if ($shouldBlockNextinSubscription) {
+                    return response('', 403);
+                }
+
+                if ($shouldReturnEncryptedClashMeta || !strpos($flag, 'sing')) {
                     $this->setSubscribeInfoToServers($servers, $user);
+                    $nextinEncrypted = new NextinEncrypted($user, $servers);
+                }
+
+                if (
+                    $shouldReturnEncryptedClashMeta
+                ) {
+                    return $nextinEncrypted->handle();
+                }
+
+                if (!strpos($flag, 'sing')) {
                     foreach (array_reverse(glob(app_path('Protocols') . '/*.php')) as $file) {
                         $file = 'App\\Protocols\\' . basename($file, '.php');
                         $class = new $file($user, $servers);
@@ -53,6 +77,45 @@ class ClientController extends Controller
             return $class->handle();
         }
     }
+    // public function subscribe(Request $request)
+    // {
+    //     $flag = $request->input('flag')
+    //         ?? ($_SERVER['HTTP_USER_AGENT'] ?? '');
+    //     $flag = strtolower($flag);
+    //     $user = $request->user;
+    //     // account not expired and is not banned.
+    //     $userService = new UserService();
+    //     if ($userService->isAvailable($user)) {
+    //         $serverService = new ServerService();
+    //         $servers = $serverService->getAvailableServers($user);
+    //         if($flag) {
+    //             if (!strpos($flag, 'sing')) {
+    //                 $this->setSubscribeInfoToServers($servers, $user);
+    //                 foreach (array_reverse(glob(app_path('Protocols') . '/*.php')) as $file) {
+    //                     $file = 'App\\Protocols\\' . basename($file, '.php');
+    //                     $class = new $file($user, $servers);
+    //                     if (strpos($flag, $class->flag) !== false) {
+    //                         return $class->handle();
+    //                     }
+    //                 }
+    //             }
+    //             if (strpos($flag, 'sing') !== false) {
+    //                 $version = null;
+    //                 if (preg_match('/sing-box\s+([0-9.]+)/i', $flag, $matches)) {
+    //                     $version = $matches[1];
+    //                 }
+    //                 if (!is_null($version) && $version >= '1.12.0') {
+    //                     $class = new Singbox($user, $servers);
+    //                 } else {
+    //                     $class = new SingboxOld($user, $servers);
+    //                 }
+    //                 return $class->handle();
+    //             }
+    //         }
+    //         $class = new General($user, $servers);
+    //         return $class->handle();
+    //     }
+    // }
 
     public function secureSubscribe(Request $request)
     {
