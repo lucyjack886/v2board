@@ -55,7 +55,10 @@ class ConfigSave extends FormRequest
         'show_subscribe_method' => 'in:0,1,2',
         'show_subscribe_expire' => 'nullable|integer',
         'show_subscribe_url' => 'in:0,1',
-        'encrypted_server_rewrite' => 'nullable|array',
+        'encrypted_server_rewrite' => [
+            'nullable',
+            'array',
+        ],
         // server
         'server_api_url' => 'nullable|string',
         'server_token' => 'nullable|min:16',
