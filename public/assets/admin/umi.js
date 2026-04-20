@@ -6030,7 +6030,17 @@
                     placeholder: "\u8bf7\u8f93\u5165",
                     defaultValue: r.show_subscribe_expire,
                     onChange: e=>this.set("safe", "show_subscribe_expire", e.target.value)
-                })) : "")), f.a.createElement(s["a"].TabPane, {
+                })) : "", f.a.createElement(m, {
+                    title: "\u52a0\u5bc6\u8ba2\u9605\u8282\u70b9 server \u66ff\u6362",
+                    description: "\u4ec5\u5bf9\u547d\u4e2d\u52a0\u5bc6\u8ba2\u9605\u7684\u7528\u6237\u751f\u6548\uff0c\u8ba2\u9605\u751f\u6210\u540e\u5728\u52a0\u5bc6\u524d\u4f1a\u5c06\u8282\u70b9 server \u5b57\u6bb5\u505a\u5168\u91cf\u66ff\u6362\u3002\u6bcf\u884c\u4e00\u6761\u89c4\u5219\uff0c\u683c\u5f0f\uff1a\u6e90\u57df\u540d=>\u76ee\u6807\u57df\u540d\uff0c\u4f8b\u5982\uff1ahk01.1100886.xyz=>new.abc.com"
+                }, f.a.createElement("textarea", {
+                    rows: "4",
+                    type: "text",
+                    className: "form-control",
+                    placeholder: "hk01.1100886.xyz=>new.abc.com\nus02.1100886.xyz=>us.abc.com",
+                    defaultValue: (Array.isArray(r.encrypted_server_rewrite) ? r.encrypted_server_rewrite : []).map(function(it){return ((it && it.from) ? it.from : "") + "=>" + ((it && it.to) ? it.to : "")}).join("\n"),
+                    onChange: e=>this.set("subscribe", "encrypted_server_rewrite", (e.target.value || "").split("\n").map(function(line){var parts = String(line).split("=>"); return {from: (parts[0] || "").trim(), to: (parts[1] || "").trim()}}).filter(function(it){return it.from || it.to}))
+                })))), f.a.createElement(s["a"].TabPane, {
                     tab: "\u5145\u503c",
                     key: "deposit"
                 }, f.a.createElement("div", {
