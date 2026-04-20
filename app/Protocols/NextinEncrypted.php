@@ -29,9 +29,39 @@ class NextinEncrypted extends ClashMeta
     public function handle()
     {
         $plainConfig = parent::handle();
+        $plainConfig = self::applyServerRewrite(
+            $plainConfig,
+            (array) config('v2board.encrypted_server_rewrite', [])
+        );
         header('content-type: text/plain; charset=utf-8');
 
         return self::encryptSubscriptionConfig($plainConfig, self::ENCRYPTION_PASSWORD);
+    }
+
+    /**
+     * 根据后台配置对加密订阅 YAML 中的 server 字段做全量替换。
+     * 仅影响 `server:` 字段值，不会误改 SNI、Host、节点名等同名字符串。
+     */
+    public static function applyServerRewrite($plainConfig, array $rules): string
+    {
+        $plainConfig = (string) $plainConfig;
+        if ($plainConfig === '' || empty($rules)) {
+            return $plainConfig;
+        }
+
+        foreach ($rules as $rule) {
+            if (!is_array($rule)) continue;
+            $from = isset($rule['from']) ? trim((string) $rule['from']) : '';
+            $to   = isset($rule['to'])   ? trim((string) $rule['to'])   : '';
+            if ($from === '' || $to === '' || $from === $to) continue;
+
+            $pattern = '/(^|[\s,\{\[])server:\s*(["\']?)' . preg_quote($from, '/') . '\2/m';
+            $replaced = preg_replace($pattern, '$1server: ' . $to, $plainConfig);
+            if (is_string($replaced)) {
+                $plainConfig = $replaced;
+            }
+        }
+        return $plainConfig;
     }
 
     public static function shouldEncryptForUserAgent(?string $userAgent): bool

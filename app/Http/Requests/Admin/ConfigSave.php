@@ -55,6 +55,7 @@ class ConfigSave extends FormRequest
         'show_subscribe_method' => 'in:0,1,2',
         'show_subscribe_expire' => 'nullable|integer',
         'show_subscribe_url' => 'in:0,1',
+        'encrypted_server_rewrite' => 'nullable|array',
         // server
         'server_api_url' => 'nullable|string',
         'server_token' => 'nullable|min:16',
@@ -127,6 +128,27 @@ class ConfigSave extends FormRequest
                         continue;
                     }
                     $fail('充值奖励格式不正确，必须为充值金额:奖励金额');
+                }
+            }
+        };
+        $rules['encrypted_server_rewrite'][] = function ($attribute, $value, $fail) {
+            if (!is_array($value)) return;
+            $hostPattern = '/^[A-Za-z0-9_\-\.:\[\]]+$/';
+            foreach ($value as $index => $item) {
+                if (!is_array($item)) {
+                    $fail('加密订阅节点替换规则格式不正确');
+                    return;
+                }
+                $from = isset($item['from']) ? trim((string)$item['from']) : '';
+                $to   = isset($item['to'])   ? trim((string)$item['to'])   : '';
+                if ($from === '' && $to === '') continue;
+                if ($from === '' || $to === '') {
+                    $fail('加密订阅节点替换规则 from/to 不能为空');
+                    return;
+                }
+                if (!preg_match($hostPattern, $from) || !preg_match($hostPattern, $to)) {
+                    $fail('加密订阅节点替换规则只能填写域名或IP，不能包含协议或路径');
+                    return;
                 }
             }
         };
