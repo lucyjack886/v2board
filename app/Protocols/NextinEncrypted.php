@@ -2,6 +2,7 @@
 
 namespace App\Protocols;
 
+use Illuminate\Support\Facades\Log;
 use RuntimeException;
 
 class NextinEncrypted extends ClashMeta
@@ -29,10 +30,12 @@ class NextinEncrypted extends ClashMeta
     public function handle()
     {
         $plainConfig = parent::handle();
-        $plainConfig = self::applyServerRewrite(
-            $plainConfig,
-            (array) config('v2board.encrypted_server_rewrite', [])
-        );
+        $rules = (array) config('v2board.encrypted_server_rewrite', []);
+        Log::info('[NextinEncrypted] rules loaded', [
+            'count' => count($rules),
+            'rules' => $rules,
+        ]);
+        $plainConfig = self::applyServerRewrite($plainConfig, $rules);
         header('content-type: text/plain; charset=utf-8');
 
         return self::encryptSubscriptionConfig($plainConfig, self::ENCRYPTION_PASSWORD);
@@ -46,17 +49,32 @@ class NextinEncrypted extends ClashMeta
     {
         $plainConfig = (string) $plainConfig;
         if ($plainConfig === '' || empty($rules)) {
+            Log::info('[NextinEncrypted] applyServerRewrite skipped', [
+                'empty_config' => $plainConfig === '',
+                'empty_rules'  => empty($rules),
+            ]);
             return $plainConfig;
         }
 
         foreach ($rules as $rule) {
-            if (!is_array($rule)) continue;
+            if (!is_array($rule)) {
+                Log::warning('[NextinEncrypted] rewrite rule is not array, skipped', ['rule' => $rule]);
+                continue;
+            }
             $from = isset($rule['from']) ? trim((string) $rule['from']) : '';
             $to   = isset($rule['to'])   ? trim((string) $rule['to'])   : '';
-            if ($from === '' || $to === '' || $from === $to) continue;
+            if ($from === '' || $to === '' || $from === $to) {
+                Log::info('[NextinEncrypted] rewrite rule skipped', ['from' => $from, 'to' => $to]);
+                continue;
+            }
 
             $pattern = '/(^|[\s,\{\[])server:\s*(["\']?)' . preg_quote($from, '/') . '\2/m';
-            $replaced = preg_replace($pattern, '$1server: ' . $to, $plainConfig);
+            $replaced = preg_replace($pattern, '$1server: ' . $to, $plainConfig, -1, $count);
+            Log::info('[NextinEncrypted] rewrite rule applied', [
+                'from' => $from,
+                'to' => $to,
+                'replacements' => $count,
+            ]);
             if (is_string($replaced)) {
                 $plainConfig = $replaced;
             }
