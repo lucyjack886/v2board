@@ -1717,6 +1717,39 @@ GET /api/v1/guest/plan/fetch
 }
 ```
 
+### 📢 公开公告
+
+#### 获取公开公告列表
+```http
+GET /api/v1/guest/notice/fetch
+```
+
+**查询参数**:
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| id | number | 可选，获取单条公告 |
+| current | number | 页码，默认 1 |
+| pageSize | number | 每页条数，默认 5，最大 100 |
+
+**响应**:
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "title": "公告标题",
+      "content": "公告内容",
+      "show": 1,
+      "img_url": null,
+      "tags": ["购买页"],
+      "created_at": 1234567890,
+      "updated_at": 1234567890
+    }
+  ],
+  "total": 1
+}
+```
+
 ### 📱 客户端版本信息
 
 #### 获取客户端版本

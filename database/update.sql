@@ -856,3 +856,6 @@ CREATE TABLE `v2_server_v2node` (
 
 ALTER TABLE `v2_server_route`
 CHANGE `action_value` `action_value` text NULL AFTER `action`;
+
+ALTER TABLE `v2_user`
+ADD `level` tinyint(4) DEFAULT NULL COMMENT '0/null:未知 1:低风险 2:白名单 -1:恶意' AFTER `remarks`;
