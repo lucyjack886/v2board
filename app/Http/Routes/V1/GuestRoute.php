@@ -20,6 +20,8 @@ class GuestRoute
             $router->get ('/comm/config', 'V1\\Guest\\CommController@config');
             // Plan - 公开查询计划
             $router->get('/plan/fetch', 'V1\\Guest\\PlanController@fetch');
+            // Notice - 公开查询公告
+            $router->get('/notice/fetch', 'V1\\Guest\\NoticeController@fetch');
             // App - 免登录获取客户端版本信息
             $router->get('/app/getVersion', function(Request $request) {
                 return response([
