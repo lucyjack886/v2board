@@ -31,7 +31,8 @@ class UserUpdate extends FormRequest
             'commission_type' => 'integer',
             'commission_balance' => 'integer',
             'remarks' => 'nullable',
-            'speed_limit' => 'nullable|integer'
+            'speed_limit' => 'nullable|integer',
+            'level' => 'nullable|integer|in:-1,0,1,2'
         ];
     }
 

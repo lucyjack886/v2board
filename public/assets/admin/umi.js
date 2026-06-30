@@ -6032,14 +6032,14 @@
                     onChange: e=>this.set("safe", "show_subscribe_expire", e.target.value)
                 })) : "", f.a.createElement(m, {
                     title: "\u52a0\u5bc6\u8ba2\u9605\u8282\u70b9 server \u66ff\u6362",
-                    description: "\u4ec5\u5bf9\u547d\u4e2d\u52a0\u5bc6\u8ba2\u9605\u7684\u7528\u6237\u751f\u6548\uff0c\u8ba2\u9605\u751f\u6210\u540e\u5728\u52a0\u5bc6\u524d\u4f1a\u5c06\u8282\u70b9 server \u5b57\u6bb5\u505a\u5168\u91cf\u66ff\u6362\u3002\u6bcf\u884c\u4e00\u6761\u89c4\u5219\uff0c\u683c\u5f0f\uff1a\u6e90\u57df\u540d=>\u76ee\u6807\u57df\u540d\uff0c\u4f8b\u5982\uff1ahk01.1100886.xyz=>new.abc.com"
+                    description: "\u4ec5\u5bf9\u547d\u4e2d\u52a0\u5bc6\u8ba2\u9605\u7684\u7528\u6237\u751f\u6548\uff0c\u8ba2\u9605\u751f\u6210\u540e\u5728\u52a0\u5bc6\u524d\u4f1a\u5c06\u8282\u70b9 server \u5b57\u6bb5\u505a\u5168\u91cf\u66ff\u6362\u3002\u6bcf\u884c\u4e00\u6761\u89c4\u5219\uff0c\u683c\u5f0f\uff1a\u6e90=>未知(0/null)=>低风险(1)=>白名单(2)=>恶意(-1)\uff0c\u4f8b\u5982\uff1a43.198.209.225=>18.183.238.0=>18.183.238.1=>18.183.238.2=>18.183.238.3"
                 }, f.a.createElement("textarea", {
                     rows: "4",
                     type: "text",
                     className: "form-control",
-                    placeholder: "hk01.1100886.xyz=>new.abc.com\nus02.1100886.xyz=>us.abc.com",
-                    defaultValue: (Array.isArray(r.encrypted_server_rewrite) ? r.encrypted_server_rewrite : []).map(function(it){return ((it && it.from) ? it.from : "") + "=>" + ((it && it.to) ? it.to : "")}).join("\n"),
-                    onChange: e=>this.set("subscribe", "encrypted_server_rewrite", (e.target.value || "").split("\n").map(function(line){var parts = String(line).split("=>"); return {from: (parts[0] || "").trim(), to: (parts[1] || "").trim()}}).filter(function(it){return it.from || it.to}))
+                    placeholder: "43.198.209.225=>18.183.238.0=>18.183.238.1=>18.183.238.2=>18.183.238.3",
+                    defaultValue: (Array.isArray(r.encrypted_server_rewrite) ? r.encrypted_server_rewrite : []).map(function(it){if(it&&it.rule)return it.rule;if(it&&it.targets&&it.targets.length)return(it.from||"")+"=>"+it.targets.join("=>");return((it&&it.from)?it.from:"")+"=>"+((it&&it.to)?it.to:"")}).join("\n"),
+                    onChange: e=>this.set("subscribe", "encrypted_server_rewrite", (e.target.value || "").split("\n").map(function(line){line=String(line).trim();if(!line)return null;var parts=line.split("=>").map(function(p){return p.trim()}).filter(function(p){return p});if(parts.length<2)return null;if(parts.length===2)return{from:parts[0],to:parts[1]};return{from:parts[0],targets:parts.slice(1)}}).filter(Boolean))
                 })))), f.a.createElement(s["a"].TabPane, {
                     tab: "\u5145\u503c",
                     key: "deposit"
@@ -22464,6 +22464,31 @@
                     key: 0,
                     value: 0
                 }, "\u6b63\u5e38"))), p.a.createElement("div", {
+                    className: "form-group"
+                }, p.a.createElement("label", {
+                    for: "example-text-input-alt"
+                }, "\u7528\u6237\u5206\u7ea7"), p.a.createElement(l["a"], {
+                    style: {
+                        width: "100%"
+                    },
+                    defaultValue: null === t.level || void 0 === t.level ? "" : parseInt(t.level),
+                    onChange: e=>this.formChange("level", "" === e ? null : e)
+                }, p.a.createElement(l["a"].Option, {
+                    key: "unknown",
+                    value: ""
+                }, "\u672a\u77e5"), p.a.createElement(l["a"].Option, {
+                    key: 1,
+                    value: 1
+                }, "\u4f4e\u98ce\u9669"), p.a.createElement(l["a"].Option, {
+                    key: 2,
+                    value: 2
+                }, "\u767d\u540d\u5355"), p.a.createElement(l["a"].Option, {
+                    key: -1,
+                    value: -1
+                }, "\u6076\u610f"), p.a.createElement(l["a"].Option, {
+                    key: 0,
+                    value: 0
+                }, "\u672a\u77e5(0)"))), p.a.createElement("div", {
                     className: "form-group"
                 }, p.a.createElement("label", {
                     for: "example-text-input-alt"

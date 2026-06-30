@@ -137,20 +137,45 @@ class ConfigSave extends FormRequest
         $rules['encrypted_server_rewrite'][] = function ($attribute, $value, $fail) {
             if (!is_array($value)) return;
             $hostPattern = '/^[A-Za-z0-9_\-\.:\[\]]+$/';
-            foreach ($value as $index => $item) {
+            foreach ($value as $item) {
+                if (is_string($item)) {
+                    $item = ['rule' => $item];
+                }
                 if (!is_array($item)) {
                     $fail('加密订阅节点替换规则格式不正确');
                     return;
                 }
-                $from = isset($item['from']) ? trim((string)$item['from']) : '';
-                $to   = isset($item['to'])   ? trim((string)$item['to'])   : '';
-                if ($from === '' && $to === '') continue;
-                if ($from === '' || $to === '') {
-                    $fail('加密订阅节点替换规则 from/to 不能为空');
+
+                if (isset($item['rule']) && is_string($item['rule']) && trim($item['rule']) === '') {
+                    continue;
+                }
+
+                $normalized = \App\Protocols\NextinEncrypted::normalizeRewriteRule($item);
+                if ($normalized === null) {
+                    if (isset($item['from'], $item['to']) && trim((string) $item['from']) === '' && trim((string) $item['to']) === '') {
+                        continue;
+                    }
+                    $fail('加密订阅节点替换规则格式不正确，需为 源=>未知=>低风险=>白名单=>恶意');
                     return;
                 }
-                if (!preg_match($hostPattern, $from) || !preg_match($hostPattern, $to)) {
+
+                $from = $normalized['from'];
+                $targets = $normalized['targets'];
+                if ($from === '') {
+                    continue;
+                }
+                if (!preg_match($hostPattern, $from)) {
                     $fail('加密订阅节点替换规则只能填写域名或IP，不能包含协议或路径');
+                    return;
+                }
+                foreach ($targets as $target) {
+                    if (!preg_match($hostPattern, $target)) {
+                        $fail('加密订阅节点替换规则只能填写域名或IP，不能包含协议或路径');
+                        return;
+                    }
+                }
+                if (count($targets) > 1 && count($targets) !== 4) {
+                    $fail('加密订阅节点替换规则需包含 4 个分级目标地址');
                     return;
                 }
             }
