@@ -6040,6 +6040,16 @@
                     placeholder: "43.198.209.225=>18.183.238.0=>18.183.238.1=>18.183.238.2=>18.183.238.3",
                     defaultValue: (Array.isArray(r.encrypted_server_rewrite) ? r.encrypted_server_rewrite : []).map(function(it){if(it&&it.rule)return it.rule;if(it&&it.targets&&it.targets.length)return(it.from||"")+"=>"+it.targets.join("=>");return((it&&it.from)?it.from:"")+"=>"+((it&&it.to)?it.to:"")}).join("\n"),
                     onChange: e=>this.set("subscribe", "encrypted_server_rewrite", (e.target.value || "").split("\n").map(function(line){line=String(line).trim();if(!line)return null;var parts=line.split("=>").map(function(p){return p.trim()}).filter(function(p){return p});if(parts.length<2)return null;if(parts.length===2)return{from:parts[0],to:parts[1]};return{from:parts[0],targets:parts.slice(1)}}).filter(Boolean))
+                })), f.a.createElement(m, {
+                    title: "\u672a\u52a0\u5bc6\u8ba2\u9605\u8282\u70b9 server \u66ff\u6362",
+                    description: "\u4ec5\u5bf9\u975e BlueBird \u52a0\u5bc6\u8ba2\u9605\u751f\u6548\uff0c\u6309\u7528\u6237\u5206\u7ea7\u66ff\u6362\u8282\u70b9\u8fde\u63a5\u5730\u5740\uff08host\uff09\uff0c\u4e0d\u5f71\u54cd SNI/Host \u5934\u3002\u6bcf\u884c\u4e00\u6761\u89c4\u5219\uff0c\u683c\u5f0f\uff1a\u6e90=>未知(0/null)=>低风险(1)=>白名单(2)=>恶意(-1)\uff0c\u4f8b\u5982\uff1a18.167.134.166=>18.183.98.41=>0630.11151115.xyz=>0630.11151115.xyz=>127.0.0.1"
+                }, f.a.createElement("textarea", {
+                    rows: "4",
+                    type: "text",
+                    className: "form-control",
+                    placeholder: "18.167.134.166=>18.183.98.41=>0630.11151115.xyz=>0630.11151115.xyz=>127.0.0.1",
+                    defaultValue: (Array.isArray(r.plain_server_rewrite) ? r.plain_server_rewrite : []).map(function(it){if(it&&it.rule)return it.rule;if(it&&it.targets&&it.targets.length)return(it.from||"")+"=>"+it.targets.join("=>");return((it&&it.from)?it.from:"")+"=>"+((it&&it.to)?it.to:"")}).join("\n"),
+                    onChange: e=>this.set("subscribe", "plain_server_rewrite", (e.target.value || "").split("\n").map(function(line){line=String(line).trim();if(!line)return null;var parts=line.split("=>").map(function(p){return p.trim()}).filter(function(p){return p});if(parts.length<2)return null;if(parts.length===2)return{from:parts[0],to:parts[1]};return{from:parts[0],targets:parts.slice(1)}}).filter(Boolean))
                 })))), f.a.createElement(s["a"].TabPane, {
                     tab: "\u5145\u503c",
                     key: "deposit"
