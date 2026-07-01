@@ -11,6 +11,7 @@ use App\Protocols\ClashMeta;
 use App\Services\ServerService;
 use App\Services\UserService;
 use App\Utils\Helper;
+use App\Utils\SubscribeServerRewrite;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
@@ -28,7 +29,12 @@ class ClientController extends Controller
         if ($userService->isAvailable($user)) {
             $serverService = new ServerService();
             $servers = $serverService->getAvailableServers($user);
-            if($flag) {
+            $userLevel = is_array($user)
+                ? ($user['level'] ?? null)
+                : ($user->level ?? null);
+            $shouldReturnEncryptedClashMeta = false;
+
+            if ($flag) {
                 $nextinEncrypted = new NextinEncrypted($user, $servers);
                 $shouldBlockNextinSubscription =
                     NextinEncrypted::shouldBlockSubscriptionForUserAgent($userAgent);
@@ -39,7 +45,17 @@ class ClientController extends Controller
                 if ($shouldBlockNextinSubscription) {
                     return response('', 403);
                 }
+            }
 
+            if (!$shouldReturnEncryptedClashMeta) {
+                SubscribeServerRewrite::applyToServers(
+                    $servers,
+                    (array) config('v2board.plain_server_rewrite', []),
+                    $userLevel
+                );
+            }
+
+            if($flag) {
                 if ($shouldReturnEncryptedClashMeta || !strpos($flag, 'sing')) {
                     $this->setSubscribeInfoToServers($servers, $user);
                     $nextinEncrypted = new NextinEncrypted($user, $servers);

@@ -119,6 +119,7 @@ class ConfigController extends Controller
                 'show_subscribe_method' => (int)config('v2board.show_subscribe_method', 0),
                 'show_subscribe_expire' => (int)config('v2board.show_subscribe_expire', 5),
                 'encrypted_server_rewrite' => config('v2board.encrypted_server_rewrite', []),
+                'plain_server_rewrite' => config('v2board.plain_server_rewrite', []),
             ],
             'frontend' => [
                 'frontend_theme' => config('v2board.frontend_theme', 'v2board'),
