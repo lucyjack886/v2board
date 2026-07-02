@@ -25,7 +25,7 @@ class SubscribeServerRewrite
 
             $from = $normalized['from'];
             $to = self::resolveTargetHost($userLevel, $normalized['targets']);
-            if ($from === '' || $to === '' || $from === $to) {
+            if ($from === '' || $to === null || $to === '' || $from === $to) {
                 continue;
             }
 
@@ -131,7 +131,9 @@ class SubscribeServerRewrite
     }
 
     /**
-     * targets 顺序：未知(0/null)、低风险(1)、白名单(2)、恶意(-1)
+     * targets 顺序（5 段新规则）：
+     * 未知(0)、低风险(1)、白名单(2)、高风险(-2)、恶意(-1)
+     * 兼容旧 4 段规则：未知、低风险、白名单、恶意（无高风险档位）
      */
     public static function resolveTargetHost($userLevel, array $targets): ?string
     {
@@ -142,14 +144,17 @@ class SubscribeServerRewrite
             return $targets[0];
         }
 
-        $index = match ((int) ($userLevel ?? 0)) {
+        $targetCount = count($targets);
+        $level = (int) $userLevel;
+        $index = match ($level) {
             1 => 1,
             2 => 2,
-            -1 => 3,
+            -2 => $targetCount >= 5 ? 3 : null,
+            -1 => $targetCount >= 5 ? 4 : 3,
             default => 0,
         };
 
-        if (!isset($targets[$index])) {
+        if ($index === null || !isset($targets[$index])) {
             return null;
         }
 
@@ -177,7 +182,7 @@ class SubscribeServerRewrite
                 if (isset($item['from'], $item['to']) && trim((string) $item['from']) === '' && trim((string) $item['to']) === '') {
                     continue;
                 }
-                $fail($label . '规则格式不正确，需为 源=>未知=>低风险=>白名单=>恶意');
+                $fail($label . '规则格式不正确，需为 源=>未知=>低风险=>白名单=>高风险=>恶意');
                 return;
             }
 
@@ -196,8 +201,8 @@ class SubscribeServerRewrite
                     return;
                 }
             }
-            if (count($targets) > 1 && count($targets) !== 4) {
-                $fail($label . '规则需包含 4 个分级目标地址');
+            if (count($targets) > 1 && !in_array(count($targets), [4, 5], true)) {
+                $fail($label . '规则需包含 5 个分级目标地址（兼容旧版 4 个）');
                 return;
             }
         }
