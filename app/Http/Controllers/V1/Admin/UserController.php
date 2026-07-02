@@ -173,6 +173,8 @@ class UserController extends Controller
             $params['invite_user_id'] = null;
         }
 
+        $params['level'] = (int) ($params['level'] ?? $user->level ?? 0);
+
         if (isset($params['banned']) && (int)$params['banned'] === 1) {
             $authService = new AuthService($user);
             $authService->removeAllSession();
@@ -235,7 +237,8 @@ class UserController extends Controller
                 'device_limit' => isset($plan->device_limit) ? $plan->device_limit : NULL,
                 'expired_at' => $request->input('expired_at') ?? NULL,
                 'uuid' => Helper::guid(true),
-                'token' => Helper::guid()
+                'token' => Helper::guid(),
+                'level' => 0
             ];
             if (User::where('email', $user['email'])->first()) {
                 abort(500, '邮箱已存在于系统中');
@@ -272,6 +275,7 @@ class UserController extends Controller
                 'expired_at' => $request->input('expired_at') ?? NULL,
                 'uuid' => Helper::guid(true),
                 'token' => Helper::guid(),
+                'level' => 0,
                 'created_at' => time(),
                 'updated_at' => time()
             ];

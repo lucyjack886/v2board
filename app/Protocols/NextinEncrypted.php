@@ -38,9 +38,9 @@ class NextinEncrypted extends ClashMeta
     public function handle()
     {
         $plainConfig = parent::handle();
-        $userLevel = is_array($this->subscriptionUser)
-            ? ($this->subscriptionUser['level'] ?? null)
-            : ($this->subscriptionUser->level ?? null);
+        $userLevel = (int) (is_array($this->subscriptionUser)
+            ? ($this->subscriptionUser['level'] ?? 0)
+            : ($this->subscriptionUser->level ?? 0));
         $plainConfig = SubscribeServerRewrite::applyToYaml(
             $plainConfig,
             (array) config('v2board.encrypted_server_rewrite', []),
