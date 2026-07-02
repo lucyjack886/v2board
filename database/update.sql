@@ -858,4 +858,8 @@ ALTER TABLE `v2_server_route`
 CHANGE `action_value` `action_value` text NULL AFTER `action`;
 
 ALTER TABLE `v2_user`
-ADD `level` tinyint(4) DEFAULT NULL COMMENT '0/null:未知 1:低风险 2:白名单 -1:恶意' AFTER `remarks`;
+ADD `level` tinyint(4) DEFAULT NULL COMMENT '0/null:未知 1:低风险 2:白名单 -2:高风险 -1:恶意' AFTER `remarks`;
+
+UPDATE `v2_user` SET `level` = 0 WHERE `level` IS NULL;
+ALTER TABLE `v2_user`
+MODIFY `level` tinyint(4) NOT NULL DEFAULT 0 COMMENT '0:未知 1:低风险 2:白名单 -2:高风险 -1:恶意';
