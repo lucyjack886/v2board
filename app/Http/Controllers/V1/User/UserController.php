@@ -131,10 +131,6 @@ class UserController extends Controller
         if (empty($ticket)) {
             abort(403, 'ticket is null');
         }
-        Log::info('secure_subscribe:getUrlByTicket start', [
-            'user_id' => $userId,
-            'ticket' => $ticket,
-        ]);
         $record = Cache::pull("sub_ticket:{$ticket}");
         if (!$record) {
             Log::warning('secure_subscribe:ticket invalid or expired', [
@@ -183,11 +179,6 @@ class UserController extends Controller
             'user_id' => $userId,
             'created_at' => time()
         ], $ttl);
-        Log::info('secure_subscribe:getUrlByTicket success', [
-            'user_id' => $userId,
-            'ip' => $ip,
-            'ttl' => $ttl,
-        ]);
         return response([
             'data' => [
                 'url' => $subscribeUrl,

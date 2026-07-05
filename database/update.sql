@@ -863,3 +863,28 @@ ADD `level` tinyint(4) DEFAULT NULL COMMENT '0/null:未知 1:低风险 2:白名�
 UPDATE `v2_user` SET `level` = 0 WHERE `level` IS NULL;
 ALTER TABLE `v2_user`
 MODIFY `level` tinyint(4) NOT NULL DEFAULT 0 COMMENT '0:未知 1:低风险 2:白名单 -2:高风险 -1:恶意';
+
+CREATE TABLE `v2_subscribe_log` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `user_id` int(11) NOT NULL DEFAULT 0,
+    `email` varchar(64) NOT NULL DEFAULT '',
+    `ip` varchar(128) NOT NULL DEFAULT '',
+    `country` varchar(64) DEFAULT NULL COMMENT 'IP归属国',
+    `province` varchar(64) DEFAULT NULL COMMENT '省份',
+    `city` varchar(64) DEFAULT NULL COMMENT '城市',
+    `district` varchar(64) DEFAULT NULL COMMENT '地区',
+    `isp` varchar(128) DEFAULT NULL,
+    `org` varchar(128) DEFAULT NULL,
+    `as` varchar(128) DEFAULT NULL,
+    `mobile` tinyint(1) NOT NULL DEFAULT 0,
+    `hosting` tinyint(1) NOT NULL DEFAULT 0,
+    `proxy` tinyint(1) NOT NULL DEFAULT 0,
+    `user_agent` varchar(512) DEFAULT NULL,
+    `url` varchar(512) NOT NULL DEFAULT '',
+    `success` tinyint(1) NOT NULL DEFAULT 0 COMMENT '拉取是否成功',
+    `created_at` int(11) NOT NULL,
+    `updated_at` int(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `user_id` (`user_id`),
+    KEY `created_at` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订阅拉取日志';
