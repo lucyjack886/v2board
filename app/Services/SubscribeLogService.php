@@ -27,25 +27,25 @@ class SubscribeLogService
         return in_array($path, $paths, true);
     }
 
-    public static function record($request, bool $success, array $override = []): void
+    public static function record($request, array $override = []): void
     {
         try {
             if (!self::shouldRecord($request)) {
                 return;
             }
-            SubscribeLogJob::dispatch(self::buildPayload($request, $success, $override));
+            SubscribeLogJob::dispatch(self::buildPayload($request, $override));
         } catch (\Throwable $e) {
             Log::error('subscribe_log: ' . $e->getMessage());
         }
     }
 
-    public static function buildPayload($request, bool $success, array $override = []): array
+    public static function buildPayload($request, array $override = []): array
     {
-        $user = $request->get('user');
         $userId = $override['user_id'] ?? null;
         $email = $override['email'] ?? null;
 
         if ($userId === null || $email === null) {
+            $user = $override['user'] ?? $request->input('user');
             if ($user instanceof User) {
                 $userId = $userId ?? $user->id;
                 $email = $email ?? $user->email;
@@ -55,14 +55,72 @@ class SubscribeLogService
             }
         }
 
+        if ($userId === null || $email === null) {
+            $user = self::resolveUserFromToken($request->input('token'));
+            if ($user) {
+                $userId = $userId ?? $user->id;
+                $email = $email ?? $user->email;
+            }
+        }
+
         return [
             'user_id' => (int)($userId ?? 0),
             'email' => (string)($email ?? ''),
             'ip' => Helper::getClientIp(),
             'user_agent' => $request->header('User-Agent', $_SERVER['HTTP_USER_AGENT'] ?? ''),
             'url' => $request->fullUrl(),
-            'success' => $success ? 1 : 0,
+            'success' => 1,
         ];
+    }
+
+    public static function resolveUserFromToken(?string $token): ?User
+    {
+        if (empty($token)) {
+            return null;
+        }
+
+        $user = User::where('token', $token)->first();
+        if ($user) {
+            return $user;
+        }
+
+        $submethod = (int)config('v2board.show_subscribe_method', 0);
+        switch ($submethod) {
+            case 1:
+                $usertoken = Cache::get("otpn_{$token}");
+                if ($usertoken) {
+                    return User::where('token', $usertoken)->first();
+                }
+                break;
+            case 2:
+                $usertoken = Cache::get("totp_{$token}");
+                if ($usertoken) {
+                    return User::where('token', $usertoken)->first();
+                }
+                $timestep = (int)config('v2board.show_subscribe_expire', 5) * 60;
+                $counter = floor(time() / $timestep);
+                $counterBytes = pack('N*', 0) . pack('N*', $counter);
+                $idhash = Helper::base64DecodeUrlSafe($token);
+                if (strpos($idhash, ':') === false) {
+                    return null;
+                }
+                $parts = explode(':', $idhash, 2);
+                [$userid, $clienthash] = $parts;
+                if (!$userid || !$clienthash) {
+                    return null;
+                }
+                $user = User::where('id', $userid)->first();
+                if (!$user) {
+                    return null;
+                }
+                $hash = hash_hmac('sha1', $counterBytes, $user->token, false);
+                if ($clienthash !== $hash) {
+                    return null;
+                }
+                return $user;
+        }
+
+        return null;
     }
 
     public static function persist(array $payload): void
@@ -84,7 +142,7 @@ class SubscribeLogService
             'proxy' => isset($ipInfo['proxy']) ? (int)(bool)$ipInfo['proxy'] : 0,
             'user_agent' => $payload['user_agent'] ?? null,
             'url' => $payload['url'] ?? '',
-            'success' => (int)($payload['success'] ?? 0),
+            'success' => 1,
             'created_at' => time(),
             'updated_at' => time(),
         ]);

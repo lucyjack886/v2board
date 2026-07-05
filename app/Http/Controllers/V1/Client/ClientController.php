@@ -99,10 +99,11 @@ class ClientController extends Controller
             $response = $class->handle();
             return $response;
         } finally {
-            SubscribeLogService::record(
-                $request,
-                SubscribeLogService::isSuccessfulSubscribeResponse($response)
-            );
+            if (SubscribeLogService::isSuccessfulSubscribeResponse($response)) {
+                SubscribeLogService::record($request, [
+                    'user' => $user ?? null,
+                ]);
+            }
         }
     }
 
