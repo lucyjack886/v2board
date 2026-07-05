@@ -25,7 +25,7 @@ class ClientController extends Controller
             $flag = $request->input('flag')
                 ?? $userAgent;
             $flag = strtolower($flag);
-            $user = $request->user;
+            $user = $request->input('user');
             // account not expired and is not banned.
             $userService = new UserService();
             if (!$userService->isAvailable($user)) {
@@ -99,10 +99,9 @@ class ClientController extends Controller
             $response = $class->handle();
             return $response;
         } finally {
-            SubscribeLogService::record(
-                $request,
-                SubscribeLogService::isSuccessfulSubscribeResponse($response)
-            );
+            if (SubscribeLogService::isSuccessfulSubscribeResponse($response)) {
+                SubscribeLogService::record($request);
+            }
         }
     }
 
