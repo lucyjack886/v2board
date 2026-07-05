@@ -44,8 +44,9 @@ class ClientIpBound
 
         Cache::forget("sub_ip:{$token}");
 
+        $request->attributes->set('subscribe_usertoken', $usertoken);
         $request->merge([
-            'user' => $user
+            'user' => $user,
         ]);
 
         return $next($request);

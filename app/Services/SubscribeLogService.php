@@ -27,50 +27,46 @@ class SubscribeLogService
         return in_array($path, $paths, true);
     }
 
-    public static function record($request, array $override = []): void
+    public static function record($request): void
     {
         try {
             if (!self::shouldRecord($request)) {
                 return;
             }
-            SubscribeLogJob::dispatch(self::buildPayload($request, $override));
+            SubscribeLogJob::dispatch(self::buildPayload($request));
         } catch (\Throwable $e) {
             Log::error('subscribe_log: ' . $e->getMessage());
         }
     }
 
-    public static function buildPayload($request, array $override = []): array
+    public static function buildPayload($request): array
     {
-        $userId = $override['user_id'] ?? null;
-        $email = $override['email'] ?? null;
-
-        if ($userId === null || $email === null) {
-            $user = $override['user'] ?? $request->input('user');
-            if ($user instanceof User) {
-                $userId = $userId ?? $user->id;
-                $email = $email ?? $user->email;
-            } elseif (is_array($user)) {
-                $userId = $userId ?? ($user['id'] ?? null);
-                $email = $email ?? ($user['email'] ?? null);
-            }
-        }
-
-        if ($userId === null || $email === null) {
-            $user = self::resolveUserFromToken($request->input('token'));
-            if ($user) {
-                $userId = $userId ?? $user->id;
-                $email = $email ?? $user->email;
-            }
-        }
+        $user = self::resolveUserFromRequest($request);
 
         return [
-            'user_id' => (int)($userId ?? 0),
-            'email' => (string)($email ?? ''),
+            'user_id' => $user instanceof User ? (int)$user->id : 0,
+            'email' => $user instanceof User ? (string)$user->email : '',
             'ip' => Helper::getClientIp(),
             'user_agent' => $request->header('User-Agent', $_SERVER['HTTP_USER_AGENT'] ?? ''),
             'url' => $request->fullUrl(),
             'success' => 1,
         ];
+    }
+
+    /**
+     * 客户端仅携带 token，用户信息由服务端从 token 推断。
+     */
+    public static function resolveUserFromRequest($request): ?User
+    {
+        $usertoken = $request->attributes->get('subscribe_usertoken');
+        if (!empty($usertoken)) {
+            $user = User::where('token', $usertoken)->first();
+            if ($user) {
+                return $user;
+            }
+        }
+
+        return self::resolveUserFromToken($request->input('token'));
     }
 
     public static function resolveUserFromToken(?string $token): ?User

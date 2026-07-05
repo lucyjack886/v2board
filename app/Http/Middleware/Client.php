@@ -69,8 +69,9 @@ class Client
         if (!$user) {
             abort(403, 'token is error');
         }
+        $request->attributes->set('subscribe_usertoken', $token);
         $request->merge([
-            'user' => $user
+            'user' => $user,
         ]);
         return $next($request);
     }
