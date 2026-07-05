@@ -116,6 +116,33 @@ CREATE TABLE `v2_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
+DROP TABLE IF EXISTS `v2_subscribe_log`;
+CREATE TABLE `v2_subscribe_log` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `user_id` int(11) NOT NULL DEFAULT 0,
+    `email` varchar(64) NOT NULL DEFAULT '',
+    `ip` varchar(128) NOT NULL DEFAULT '',
+    `country` varchar(64) DEFAULT NULL COMMENT 'IP归属国',
+    `province` varchar(64) DEFAULT NULL COMMENT '省份',
+    `city` varchar(64) DEFAULT NULL COMMENT '城市',
+    `district` varchar(64) DEFAULT NULL COMMENT '地区',
+    `isp` varchar(128) DEFAULT NULL,
+    `org` varchar(128) DEFAULT NULL,
+    `as` varchar(128) DEFAULT NULL,
+    `mobile` tinyint(1) NOT NULL DEFAULT 0,
+    `hosting` tinyint(1) NOT NULL DEFAULT 0,
+    `proxy` tinyint(1) NOT NULL DEFAULT 0,
+    `user_agent` varchar(512) DEFAULT NULL,
+    `url` varchar(512) NOT NULL DEFAULT '',
+    `success` tinyint(1) NOT NULL DEFAULT 0 COMMENT '拉取是否成功',
+    `created_at` int(11) NOT NULL,
+    `updated_at` int(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `user_id` (`user_id`),
+    KEY `created_at` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订阅拉取日志';
+
+
 DROP TABLE IF EXISTS `v2_mail_log`;
 CREATE TABLE `v2_mail_log` (
                                `id` int(11) NOT NULL AUTO_INCREMENT,
