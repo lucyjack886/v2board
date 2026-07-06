@@ -890,7 +890,7 @@ CREATE TABLE `v2_subscribe_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订阅拉取日志';
 
 ALTER TABLE `v2_subscribe_log`
-ADD `rewrite_target` varchar(512) NOT NULL DEFAULT '' COMMENT '本次替换目标IP/域名' AFTER `success`;
+ADD `rewrite_target` varchar(256) NOT NULL DEFAULT '' COMMENT '本次替换目标IP/域名' AFTER `success`;
 
 -- 用户分级：-1 高风险1、-2 高风险2、-3 蜜罐（原 -1 恶意、-2 高风险）
 UPDATE `v2_user` SET `level` = -3 WHERE `level` = -1;
