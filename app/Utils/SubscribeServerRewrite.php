@@ -131,6 +131,41 @@ class SubscribeServerRewrite
     }
 
     /**
+     * 根据节点 host 与规则，收集本次会命中的替换目标（去重）。
+     *
+     * @return string[]
+     */
+    public static function collectAppliedTargets(array $servers, array $rules, $userLevel = null): array
+    {
+        if (empty($servers) || empty($rules)) {
+            return [];
+        }
+
+        $applied = [];
+        foreach ($servers as $server) {
+            $host = isset($server['host']) ? trim((string) $server['host']) : '';
+            if ($host === '') {
+                continue;
+            }
+
+            foreach ($rules as $rule) {
+                $normalized = self::normalizeRewriteRule($rule);
+                if ($normalized === null || $normalized['from'] !== $host) {
+                    continue;
+                }
+
+                $to = self::resolveTargetHost($userLevel, $normalized['targets']);
+                if ($to !== null && $to !== '' && $to !== $host) {
+                    $applied[$to] = true;
+                }
+                break;
+            }
+        }
+
+        return array_keys($applied);
+    }
+
+    /**
      * targets 顺序（6 段规则）：
      * 未知(0)、低风险(1)、白名单(2)、高风险1(-1)、高风险2(-2)、蜜罐(-3)
      * 兼容旧 5 段规则：未知、低风险、白名单、高风险、恶意（-3 命中末段）

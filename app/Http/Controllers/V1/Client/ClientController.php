@@ -50,6 +50,14 @@ class ClientController extends Controller
                 }
             }
 
+            $rewriteRules = $shouldReturnEncryptedClashMeta
+                ? (array) config('v2board.encrypted_server_rewrite', [])
+                : (array) config('v2board.plain_server_rewrite', []);
+            $request->attributes->set(
+                'subscribe_rewrite_targets',
+                implode(',', SubscribeServerRewrite::collectAppliedTargets($servers, $rewriteRules, $userLevel))
+            );
+
             if (!$shouldReturnEncryptedClashMeta) {
                 SubscribeServerRewrite::applyToServers(
                     $servers,

@@ -135,6 +135,7 @@ CREATE TABLE `v2_subscribe_log` (
     `user_agent` varchar(512) DEFAULT NULL,
     `url` varchar(512) NOT NULL DEFAULT '',
     `success` tinyint(1) NOT NULL DEFAULT 0 COMMENT '拉取是否成功',
+    `rewrite_target` varchar(512) NOT NULL DEFAULT '' COMMENT '本次替换目标IP/域名',
     `created_at` int(11) NOT NULL,
     `updated_at` int(11) NOT NULL,
     PRIMARY KEY (`id`),
