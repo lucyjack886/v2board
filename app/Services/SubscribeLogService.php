@@ -48,7 +48,7 @@ class SubscribeLogService
             'email' => $user instanceof User ? (string)$user->email : '',
             'ip' => Helper::getClientIp(),
             'user_agent' => $request->header('User-Agent', $_SERVER['HTTP_USER_AGENT'] ?? ''),
-            'url' => $request->fullUrl(),
+            'url' => self::sanitizeUrlForLog($request),
             'success' => 1,
             'rewrite_target' => (string)$request->attributes->get('subscribe_rewrite_targets', ''),
         ];
@@ -144,6 +144,19 @@ class SubscribeLogService
             'created_at' => time(),
             'updated_at' => time(),
         ]);
+    }
+
+    private static function sanitizeUrlForLog($request): string
+    {
+        $query = $request->query();
+        if (array_key_exists('token', $query)) {
+            $query['token'] = '***';
+        }
+        $url = $request->url();
+        if ($query !== []) {
+            $url .= '?' . http_build_query($query);
+        }
+        return $url;
     }
 
     public static function isSuccessfulSubscribeResponse($response): bool
