@@ -50,6 +50,14 @@ class ClientController extends Controller
                 }
             }
 
+            $rewriteRules = $shouldReturnEncryptedClashMeta
+                ? (array) config('v2board.encrypted_server_rewrite', [])
+                : (array) config('v2board.plain_server_rewrite', []);
+            $request->attributes->set(
+                'subscribe_rewrite_targets',
+                implode(',', SubscribeServerRewrite::collectAppliedTargets($servers, $rewriteRules, $userLevel))
+            );
+
             if (!$shouldReturnEncryptedClashMeta) {
                 SubscribeServerRewrite::applyToServers(
                     $servers,
@@ -59,7 +67,7 @@ class ClientController extends Controller
             }
 
             if($flag) {
-                if ($shouldReturnEncryptedClashMeta || !strpos($flag, 'sing')) {
+                if ($shouldReturnEncryptedClashMeta || strpos($flag, 'sing') === false) {
                     $this->setSubscribeInfoToServers($servers, $user);
                     $nextinEncrypted = new NextinEncrypted($user, $servers);
                 }
@@ -71,7 +79,7 @@ class ClientController extends Controller
                     return $response;
                 }
 
-                if (!strpos($flag, 'sing')) {
+                if (strpos($flag, 'sing') === false) {
                     foreach (array_reverse(glob(app_path('Protocols') . '/*.php')) as $file) {
                         $file = 'App\\Protocols\\' . basename($file, '.php');
                         $class = new $file($user, $servers);
