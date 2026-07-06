@@ -888,3 +888,9 @@ CREATE TABLE `v2_subscribe_log` (
     KEY `user_id` (`user_id`),
     KEY `created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订阅拉取日志';
+
+-- 用户分级：-1 高风险1、-2 高风险2、-3 蜜罐（原 -1 恶意、-2 高风险）
+UPDATE `v2_user` SET `level` = -3 WHERE `level` = -1;
+UPDATE `v2_user` SET `level` = -1 WHERE `level` = -2;
+ALTER TABLE `v2_user`
+MODIFY `level` tinyint(4) NOT NULL DEFAULT 0 COMMENT '0:未知 1:低风险 2:白名单 -1:高风险1 -2:高风险2 -3:蜜罐';
