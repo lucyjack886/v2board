@@ -120,6 +120,9 @@ class ConfigController extends Controller
                 'show_subscribe_expire' => (int)config('v2board.show_subscribe_expire', 5),
                 'encrypted_server_rewrite' => config('v2board.encrypted_server_rewrite', []),
                 'plain_server_rewrite' => config('v2board.plain_server_rewrite', []),
+                'honeypot_subscribe_enable' => (int)config('v2board.honeypot_subscribe_enable', 0),
+                'honeypot_subscribe_url' => config('v2board.honeypot_subscribe_url', ''),
+                'honeypot_subscribe_token' => config('v2board.honeypot_subscribe_token', ''),
             ],
             'frontend' => [
                 'frontend_theme' => config('v2board.frontend_theme', 'v2board'),

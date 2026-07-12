@@ -186,7 +186,7 @@ class SubscribeServerRewrite
             1 => 1,
             2 => 2,
             -1 => 3,
-            -2 => $targetCount >= 6 ? 4 : ($targetCount >= 5 ? 4 : null),
+            -2 => $targetCount >= 6 ? 4 : ($targetCount >= 5 ? 4 : ($targetCount >= 4 ? 3 : null)),
             -3 => $targetCount >= 6 ? 5 : ($targetCount >= 5 ? 4 : ($targetCount >= 4 ? 3 : null)),
             default => 0,
         };
