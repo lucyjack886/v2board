@@ -6076,7 +6076,7 @@
                     placeholder: "ghp_xxx \u6216 github_pat_xxx",
                     defaultValue: r.honeypot_subscribe_token || "",
                     onChange: e=>this.set("subscribe", "honeypot_subscribe_token", e.target.value)
-                })) : ""))), f.a.createElement(s["a"].TabPane, {
+                })) : "")), f.a.createElement(s["a"].TabPane, {
                     tab: "\u5145\u503c",
                     key: "deposit"
                 }, f.a.createElement("div", {
