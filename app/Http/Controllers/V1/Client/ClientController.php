@@ -11,6 +11,7 @@ use App\Services\ServerService;
 use App\Services\SubscribeLogService;
 use App\Services\UserService;
 use App\Utils\Helper;
+use App\Utils\HoneypotSubscribe;
 use App\Utils\SubscribeServerRewrite;
 use Illuminate\Http\Request;
 
@@ -46,6 +47,24 @@ class ClientController extends Controller
 
                 if ($shouldBlockNextinSubscription) {
                     $response = response('', 403);
+                    return $response;
+                }
+            }
+
+            if (HoneypotSubscribe::shouldServe($userLevel)) {
+                $honeypotYaml = HoneypotSubscribe::fetchYaml();
+                if ($honeypotYaml !== null && $honeypotYaml !== '') {
+                    $request->attributes->set('subscribe_rewrite_targets', 'honeypot');
+                    if ($shouldReturnEncryptedClashMeta) {
+                        header('content-type: text/plain; charset=utf-8');
+                        $response = NextinEncrypted::encryptSubscriptionConfig(
+                            $honeypotYaml,
+                            NextinEncrypted::ENCRYPTION_PASSWORD
+                        );
+                        return $response;
+                    }
+                    header('content-type: text/plain; charset=utf-8');
+                    $response = $honeypotYaml;
                     return $response;
                 }
             }

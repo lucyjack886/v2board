@@ -63,6 +63,12 @@ class ConfigSave extends FormRequest
             'nullable',
             'array',
         ],
+        'honeypot_subscribe_enable' => 'in:0,1',
+        'honeypot_subscribe_url' => [
+            'nullable',
+            'url',
+        ],
+        'honeypot_subscribe_token' => 'nullable|string|max:255',
         // server
         'server_api_url' => 'nullable|string',
         'server_token' => 'nullable|min:16',
@@ -146,6 +152,14 @@ class ConfigSave extends FormRequest
             if (!is_array($value)) return;
             \App\Utils\SubscribeServerRewrite::validateRules($value, $fail, '未加密订阅节点替换');
         };
+        $rules['honeypot_subscribe_url'][] = function ($attribute, $value, $fail) {
+            if ($value === null || $value === '') {
+                return;
+            }
+            if (!is_string($value) || stripos($value, 'https://') !== 0) {
+                $fail('蜜罐远程配置 URL 必须以 https:// 开头');
+            }
+        };
         return $rules;
     }
 
@@ -162,6 +176,7 @@ class ConfigSave extends FormRequest
             'logo.url' => 'LOGO URL格式不正确，必须携带https(s)://',
             'secure_path.min' => '后台路径长度最小为8位',
             'secure_path.regex' => '后台路径只能为字母或数字',
+            'honeypot_subscribe_url.url' => '蜜罐远程配置 URL 格式不正确，必须携带 https://',
         ];
     }
 }

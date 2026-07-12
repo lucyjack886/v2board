@@ -6050,7 +6050,33 @@
                     placeholder: "18.167.134.166=>18.183.98.41=>0630.11151115.xyz=>0630.11151115.xyz=>18.183.98.42=>18.183.98.43=>127.0.0.1",
                     defaultValue: (Array.isArray(r.plain_server_rewrite) ? r.plain_server_rewrite : []).map(function(it){if(it&&it.rule)return it.rule;if(it&&it.targets&&it.targets.length)return(it.from||"")+"=>"+it.targets.join("=>");return((it&&it.from)?it.from:"")+"=>"+((it&&it.to)?it.to:"")}).join("\n"),
                     onChange: e=>this.set("subscribe", "plain_server_rewrite", (e.target.value || "").split("\n").map(function(line){line=String(line).trim();if(!line)return null;var parts=line.split("=>").map(function(p){return p.trim()}).filter(function(p){return p});if(parts.length<2)return null;if(parts.length===2)return{from:parts[0],to:parts[1]};return{from:parts[0],targets:parts.slice(1)}}).filter(Boolean))
-                })))), f.a.createElement(s["a"].TabPane, {
+                })), f.a.createElement(m, {
+                    title: "\u871c\u7f50\u8fdc\u7a0b\u8ba2\u9605\u914d\u7f6e",
+                    description: "\u5f00\u542f\u540e\uff0c\u7528\u6237\u5206\u7ea7\u4e3a\u871c\u7f50(-3)\u65f6\u5c06\u76f4\u63a5\u4e0b\u53d1\u8fdc\u7a0b HTTPS Clash \u914d\u7f6e\uff08\u542b BlueBird \u52a0\u5bc6\uff09\u3002URL \u7559\u7a7a\u6216\u62c9\u53d6\u5931\u8d25\u65f6\u8d70\u73b0\u6709\u8282\u70b9\u66ff\u6362\u903b\u8f91\u3002"
+                }, f.a.createElement(l["a"], {
+                    checked: parseInt(r.honeypot_subscribe_enable || 0),
+                    onChange: e=>this.set("subscribe", "honeypot_subscribe_enable", e ? 1 : 0)
+                })), parseInt(r.honeypot_subscribe_enable || 0) ? f.a.createElement(m, {
+                    isChildren: !0,
+                    title: "\u8fdc\u7a0b\u914d\u7f6e\u6587\u4ef6 URL",
+                    description: "\u987b\u4e3a https:// \u5f00\u5934\uff0c\u79c1\u6709\u4ed3\u5e93\u7528 raw.githubusercontent.com/... \u5730\u5740\uff0c\u4e0d\u8981\u628a token \u5199\u8fdb URL\u3002"
+                }, f.a.createElement("input", {
+                    type: "text",
+                    className: "form-control",
+                    placeholder: "https://raw.githubusercontent.com/owner/repo/main/bad.yml",
+                    defaultValue: r.honeypot_subscribe_url || "",
+                    onChange: e=>this.set("subscribe", "honeypot_subscribe_url", e.target.value)
+                })) : "", parseInt(r.honeypot_subscribe_enable || 0) ? f.a.createElement(m, {
+                    isChildren: !0,
+                    title: "GitHub Token\uff08\u79c1\u6709\u4ed3\u5e93\u53ef\u9009\uff09",
+                    description: "\u79c1\u6709\u4ed3\u5e93\u9700\u586b\u5199\u5177\u6709 Contents: Read \u6743\u9650\u7684 PAT\uff1b\u516c\u5f00\u4ed3\u5e93\u53ef\u7559\u7a7a\u3002"
+                }, f.a.createElement("input", {
+                    type: "password",
+                    className: "form-control",
+                    placeholder: "ghp_xxx \u6216 github_pat_xxx",
+                    defaultValue: r.honeypot_subscribe_token || "",
+                    onChange: e=>this.set("subscribe", "honeypot_subscribe_token", e.target.value)
+                })) : ""))), f.a.createElement(s["a"].TabPane, {
                     tab: "\u5145\u503c",
                     key: "deposit"
                 }, f.a.createElement("div", {
