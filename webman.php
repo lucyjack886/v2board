@@ -21,7 +21,7 @@ $ncpu = substr_count((string)@file_get_contents('/proc/cpuinfo'), "\nprocessor")
 
 $port = $_ENV['WEBMAN_PORT'] ?? 6600;
 $http_worker                = new Worker("http://127.0.0.1:{$port}");
-$http_worker->count         = 8;
+$http_worker->count         = 4;
 $http_worker->name          = 'AdapterMan';
 
 $http_worker->onWorkerStart = static function () {

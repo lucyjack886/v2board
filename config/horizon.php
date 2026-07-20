@@ -182,7 +182,7 @@ return [
                 ],
                 'balance' => 'auto',
                 'minProcesses' => 1,
-                'maxProcesses' => 16,
+                'maxProcesses' => 8,
                 'tries' => 1,
                 'balanceCooldown' => 3,
             ],
