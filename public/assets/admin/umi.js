@@ -6032,22 +6032,22 @@
                     onChange: e=>this.set("safe", "show_subscribe_expire", e.target.value)
                 })) : "", f.a.createElement(m, {
                     title: "\u52a0\u5bc6\u8ba2\u9605\u8282\u70b9 server \u66ff\u6362",
-                    description: "\u4ec5\u5bf9\u547d\u4e2d\u52a0\u5bc6\u8ba2\u9605\u7684\u7528\u6237\u751f\u6548\uff0c\u8ba2\u9605\u751f\u6210\u540e\u5728\u52a0\u5bc6\u524d\u4f1a\u5c06\u8282\u70b9 server \u5b57\u6bb5\u505a\u5168\u91cf\u66ff\u6362\u3002\u6bcf\u884c\u4e00\u6761\u89c4\u5219\uff0c\u683c\u5f0f\uff1a\u6e90=>未知(0)=>低风险(1)=>白名单(2)=>高风险1(-1)=>高风险2(-2)=>蜜罐(-3)\uff0c\u4f8b\u5982\uff1a43.198.209.225=>18.183.238.0=>18.183.238.1=>18.183.238.2=>18.183.238.3=>18.183.238.4=>127.0.0.1"
+                    description: "\u4ec5\u5bf9\u547d\u4e2d\u52a0\u5bc6\u8ba2\u9605\u7684\u7528\u6237\u751f\u6548\uff0c\u8ba2\u9605\u751f\u6210\u540e\u5728\u52a0\u5bc6\u524d\u4f1a\u5c06\u8282\u70b9 server \u5b57\u6bb5\u505a\u5168\u91cf\u66ff\u6362\u3002\u6bcf\u884c\u4e00\u6761\u89c4\u5219\uff0c\u683c\u5f0f\uff1a\u6e90=>待观察(0)=>低风险(1)=>可信(2)=>核心可信(3)=>高风险(-1)=>严重风险(-2)=>蜜罐(-3)\uff0c\u4f8b\u5982\uff1a43.198.209.225=>18.183.238.0=>18.183.238.1=>18.183.238.2=>18.183.238.3=>18.183.238.4=>18.183.238.5=>127.0.0.1"
                 }, f.a.createElement("textarea", {
                     rows: "4",
                     type: "text",
                     className: "form-control",
-                    placeholder: "43.198.209.225=>18.183.238.0=>18.183.238.1=>18.183.238.2=>18.183.238.3=>18.183.238.4=>127.0.0.1",
+                    placeholder: "43.198.209.225=>18.183.238.0=>18.183.238.1=>18.183.238.2=>18.183.238.3=>18.183.238.4=>18.183.238.5=>127.0.0.1",
                     defaultValue: (Array.isArray(r.encrypted_server_rewrite) ? r.encrypted_server_rewrite : []).map(function(it){if(it&&it.rule)return it.rule;if(it&&it.targets&&it.targets.length)return(it.from||"")+"=>"+it.targets.join("=>");return((it&&it.from)?it.from:"")+"=>"+((it&&it.to)?it.to:"")}).join("\n"),
                     onChange: e=>this.set("subscribe", "encrypted_server_rewrite", (e.target.value || "").split("\n").map(function(line){line=String(line).trim();if(!line)return null;var parts=line.split("=>").map(function(p){return p.trim()}).filter(function(p){return p});if(parts.length<2)return null;if(parts.length===2)return{from:parts[0],to:parts[1]};return{from:parts[0],targets:parts.slice(1)}}).filter(Boolean))
                 })), f.a.createElement(m, {
                     title: "\u672a\u52a0\u5bc6\u8ba2\u9605\u8282\u70b9 server \u66ff\u6362",
-                    description: "\u4ec5\u5bf9\u975e BlueBird \u52a0\u5bc6\u8ba2\u9605\u751f\u6548\uff0c\u6309\u7528\u6237\u5206\u7ea7\u66ff\u6362\u8282\u70b9\u8fde\u63a5\u5730\u5740\uff08host\uff09\uff0c\u4e0d\u5f71\u54cd SNI/Host \u5934\u3002\u6bcf\u884c\u4e00\u6761\u89c4\u5219\uff0c\u683c\u5f0f\uff1a\u6e90=>未知(0)=>低风险(1)=>白名单(2)=>高风险1(-1)=>高风险2(-2)=>蜜罐(-3)\uff0c\u4f8b\u5982\uff1a18.167.134.166=>18.183.98.41=>0630.11151115.xyz=>0630.11151115.xyz=>18.183.98.42=>18.183.98.43=>127.0.0.1"
+                    description: "\u4ec5\u5bf9\u975e BlueBird \u52a0\u5bc6\u8ba2\u9605\u751f\u6548\uff0c\u6309\u7528\u6237\u5206\u7ea7\u66ff\u6362\u8282\u70b9\u8fde\u63a5\u5730\u5740\uff08host\uff09\uff0c\u4e0d\u5f71\u54cd SNI/Host \u5934\u3002\u6bcf\u884c\u4e00\u6761\u89c4\u5219\uff0c\u683c\u5f0f\uff1a\u6e90=>待观察(0)=>低风险(1)=>可信(2)=>核心可信(3)=>高风险(-1)=>严重风险(-2)=>蜜罐(-3)\uff0c\u4f8b\u5982\uff1a18.167.134.166=>18.183.98.41=>0630.11151115.xyz=>0630.11151115.xyz=>0630.11151115.xyz=>18.183.98.42=>18.183.98.43=>127.0.0.1"
                 }, f.a.createElement("textarea", {
                     rows: "4",
                     type: "text",
                     className: "form-control",
-                    placeholder: "18.167.134.166=>18.183.98.41=>0630.11151115.xyz=>0630.11151115.xyz=>18.183.98.42=>18.183.98.43=>127.0.0.1",
+                    placeholder: "18.167.134.166=>18.183.98.41=>0630.11151115.xyz=>0630.11151115.xyz=>0630.11151115.xyz=>18.183.98.42=>18.183.98.43=>127.0.0.1",
                     defaultValue: (Array.isArray(r.plain_server_rewrite) ? r.plain_server_rewrite : []).map(function(it){if(it&&it.rule)return it.rule;if(it&&it.targets&&it.targets.length)return(it.from||"")+"=>"+it.targets.join("=>");return((it&&it.from)?it.from:"")+"=>"+((it&&it.to)?it.to:"")}).join("\n"),
                     onChange: e=>this.set("subscribe", "plain_server_rewrite", (e.target.value || "").split("\n").map(function(line){line=String(line).trim();if(!line)return null;var parts=line.split("=>").map(function(p){return p.trim()}).filter(function(p){return p});if(parts.length<2)return null;if(parts.length===2)return{from:parts[0],to:parts[1]};return{from:parts[0],targets:parts.slice(1)}}).filter(Boolean))
                 })), f.a.createElement(m, {
@@ -22512,22 +22512,25 @@
                 }, p.a.createElement(l["a"].Option, {
                     key: 0,
                     value: 0
-                }, "\u672a\u77e5"), p.a.createElement(l["a"].Option, {
+                }, "\u5f85\u89c2\u5bdf"), p.a.createElement(l["a"].Option, {
                     key: 1,
                     value: 1
                 }, "\u4f4e\u98ce\u9669"), p.a.createElement(l["a"].Option, {
                     key: 2,
                     value: 2
-                }, "\u767d\u540d\u5355"), p.a.createElement(l["a"].Option, {
+                }, "\u53ef\u4fe1"), p.a.createElement(l["a"].Option, {
+                    key: 3,
+                    value: 3
+                }, "\u6838\u5fc3\u53ef\u4fe1"), p.a.createElement(l["a"].Option, {
                     key: -1,
                     value: -1
-                }, "\u9ad8\u98ce\u96691"), p.a.createElement(l["a"].Option, {
+                }, "\u9ad8\u98ce\u9669"), p.a.createElement(l["a"].Option, {
                     key: -2,
                     value: -2
-                }, "\u9ad8\u98ce\u96692"), p.a.createElement(l["a"].Option, {
+                }, "\u4e25\u91cd\u98ce\u9669"), p.a.createElement(l["a"].Option, {
                     key: -3,
                     value: -3
-                }, "\u871c\u7f50\u7ec4"))), p.a.createElement("div", {
+                }, "\u871c\u7f50"))), p.a.createElement("div", {
                     className: "form-group"
                 }, p.a.createElement("label", {
                     for: "example-text-input-alt"

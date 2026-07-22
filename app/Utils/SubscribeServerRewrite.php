@@ -166,10 +166,11 @@ class SubscribeServerRewrite
     }
 
     /**
-     * targets 顺序（6 段规则）：
-     * 未知(0)、低风险(1)、白名单(2)、高风险1(-1)、高风险2(-2)、蜜罐(-3)
-     * 兼容旧 5 段规则：未知、低风险、白名单、高风险、恶意（-3 命中末段）
-     * 兼容旧 4 段规则：未知、低风险、白名单、恶意（-1/-2/-3 均命中末段）
+     * targets 顺序（7 段规则）：
+     * 待观察(0)、低风险(1)、可信(2)、核心可信(3)、高风险(-1)、严重风险(-2)、蜜罐(-3)
+     * 兼容旧 6 段：待观察/未知、低风险、可信/白名单、高风险、严重风险/高风险2、蜜罐（核心可信回落到可信档）
+     * 兼容旧 5 段：未知、低风险、白名单、高风险、恶意（-3 命中末段）
+     * 兼容旧 4 段：未知、低风险、白名单、恶意（-1/-2/-3 均命中末段）
      */
     public static function resolveTargetHost($userLevel, array $targets): ?string
     {
@@ -185,9 +186,21 @@ class SubscribeServerRewrite
         $index = match ($level) {
             1 => 1,
             2 => 2,
-            -1 => 3,
-            -2 => $targetCount >= 6 ? 4 : ($targetCount >= 5 ? 4 : ($targetCount >= 4 ? 3 : null)),
-            -3 => $targetCount >= 6 ? 5 : ($targetCount >= 5 ? 4 : ($targetCount >= 4 ? 3 : null)),
+            3 => $targetCount >= 7 ? 3 : 2,
+            -1 => $targetCount >= 7 ? 4 : 3,
+            -2 => match (true) {
+                $targetCount >= 7 => 5,
+                $targetCount >= 5 => 4,
+                $targetCount >= 4 => 3,
+                default => null,
+            },
+            -3 => match (true) {
+                $targetCount >= 7 => 6,
+                $targetCount >= 6 => 5,
+                $targetCount >= 5 => 4,
+                $targetCount >= 4 => 3,
+                default => null,
+            },
             default => 0,
         };
 
@@ -219,7 +232,7 @@ class SubscribeServerRewrite
                 if (isset($item['from'], $item['to']) && trim((string) $item['from']) === '' && trim((string) $item['to']) === '') {
                     continue;
                 }
-                $fail($label . '规则格式不正确，需为 源=>未知=>低风险=>白名单=>高风险1=>高风险2=>蜜罐');
+                $fail($label . '规则格式不正确，需为 源=>待观察=>低风险=>可信=>核心可信=>高风险=>严重风险=>蜜罐');
                 return;
             }
 
@@ -238,8 +251,8 @@ class SubscribeServerRewrite
                     return;
                 }
             }
-            if (count($targets) > 1 && !in_array(count($targets), [4, 5, 6], true)) {
-                $fail($label . '规则需包含 6 个分级目标地址（兼容旧版 4/5 个）');
+            if (count($targets) > 1 && !in_array(count($targets), [4, 5, 6, 7], true)) {
+                $fail($label . '规则需包含 7 个分级目标地址（兼容旧版 4/5/6 个）');
                 return;
             }
         }
