@@ -892,8 +892,8 @@ CREATE TABLE `v2_subscribe_log` (
 ALTER TABLE `v2_subscribe_log`
 ADD `rewrite_target` varchar(512) NOT NULL DEFAULT '' COMMENT '本次替换目标IP/域名' AFTER `success`;
 
--- 用户分级：-1 高风险1、-2 高风险2、-3 蜜罐（原 -1 恶意、-2 高风险）
+-- 用户分级：-1 高风险、-2 严重风险、-3 蜜罐（原 -1 恶意、-2 高风险）；展示名待观察/可信，新增 3 核心可信
 UPDATE `v2_user` SET `level` = -3 WHERE `level` = -1;
 UPDATE `v2_user` SET `level` = -1 WHERE `level` = -2;
 ALTER TABLE `v2_user`
-MODIFY `level` tinyint(4) NOT NULL DEFAULT 0 COMMENT '0:未知 1:低风险 2:白名单 -1:高风险1 -2:高风险2 -3:蜜罐';
+MODIFY `level` tinyint(4) NOT NULL DEFAULT 0 COMMENT '0:待观察 1:低风险 2:可信 3:核心可信 -1:高风险 -2:严重风险 -3:蜜罐';

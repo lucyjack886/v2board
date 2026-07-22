@@ -605,7 +605,7 @@ CREATE TABLE `v2_user` (
                            `token` char(32) NOT NULL,
                            `expired_at` bigint(20) DEFAULT '0',
                            `remarks` text,
-                           `level` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0:未知 1:低风险 2:白名单 -1:高风险1 -2:高风险2 -3:蜜罐',
+                           `level` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0:待观察 1:低风险 2:可信 3:核心可信 -1:高风险 -2:严重风险 -3:蜜罐',
                            `created_at` int(11) NOT NULL,
                            `updated_at` int(11) NOT NULL,
                            PRIMARY KEY (`id`),
