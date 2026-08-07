@@ -87,7 +87,7 @@ class MailService
                 'template_value' => [
                     'name' => config('v2board.app_name', 'V2Board'),
                     'url' => $appUrl,
-                    'order_url' => $appUrl . '/#/order',
+                    'order_url' => $appUrl . '/orders/' . $order->trade_no,
                     'trade_no' => $order->trade_no,
                     'amount' => number_format($order->total_amount / 100, 2),
                     'payment_channels' => $paymentChannels,
