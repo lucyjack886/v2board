@@ -10,6 +10,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 use App\Models\MailLog;
+use App\Models\Order;
 
 class SendEmailJob implements ShouldQueue
 {
@@ -46,6 +47,15 @@ class SendEmailJob implements ShouldQueue
             Config::set('mail.from.name', config('v2board.app_name', 'V2Board'));
         }
         $params = $this->params;
+
+        // 催付邮件发送前复查：已支付/开通中则不再发送
+        if (!empty($params['unpaid_order_id'])) {
+            $order = Order::find($params['unpaid_order_id']);
+            if (!$order || !in_array((int)$order->status, [0, 2], true)) {
+                return;
+            }
+        }
+
         $email = $params['email'];
         $subject = $params['subject'];
         $params['template_name'] = 'mail.' . config('v2board.email_template', 'default') . '.' . $params['template_name'];

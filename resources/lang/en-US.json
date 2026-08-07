@@ -86,6 +86,8 @@
     "Password can not be empty": "Password can not be empty",
     "The traffic usage in :app_name has reached 95%": "The traffic usage in :app_name has reached 95%",
     "The service in :app_name is about to expire": "The service in :app_name is about to expire",
+    "Your order in :app_name is still unpaid": "Your order in :app_name is still unpaid",
+    "all available payment channels": "all available payment channels",
     "The coupon can only be used :limit_use_with_user per person": "The coupon can only be used :limit_use_with_user per person",
     "The coupon code cannot be used for this period": "The coupon code cannot be used for this period",
     "Request failed, please try again later": "Request failed, please try again later",
