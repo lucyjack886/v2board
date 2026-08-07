@@ -897,3 +897,7 @@ UPDATE `v2_user` SET `level` = -3 WHERE `level` = -1;
 UPDATE `v2_user` SET `level` = -1 WHERE `level` = -2;
 ALTER TABLE `v2_user`
 MODIFY `level` tinyint(4) NOT NULL DEFAULT 0 COMMENT '0:待观察 1:低风险 2:可信 3:核心可信 -1:高风险 -2:严重风险 -3:蜜罐';
+
+-- unpaid order mail: speed up status+created_at range scan
+ALTER TABLE `v2_order`
+ADD INDEX `idx_status_created_at` (`status`, `created_at`);

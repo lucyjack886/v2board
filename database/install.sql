@@ -200,7 +200,8 @@ CREATE TABLE `v2_order` (
                             PRIMARY KEY (`id`),
                             UNIQUE KEY `trade_no` (`trade_no`),
                             INDEX idx_user (`user_id`),
-                            INDEX idx_user_status (`user_id`, `status`)
+                            INDEX idx_user_status (`user_id`, `status`),
+                            INDEX idx_status_created_at (`status`, `created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
