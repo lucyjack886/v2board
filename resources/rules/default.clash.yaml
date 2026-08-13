@@ -32,10 +32,6 @@ dns:
   proxy-server-nameserver:
     - 119.29.29.29
     - 182.254.116.116
-  proxy-server-nameserver-policy:
-    "+.20251088.xyz":
-      - vip8.alidns.com
-      - vip7.alidns.com
   nameserver:
     - 119.29.29.29
     - 182.254.116.116

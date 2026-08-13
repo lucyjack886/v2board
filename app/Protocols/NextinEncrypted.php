@@ -4,6 +4,7 @@ namespace App\Protocols;
 
 use App\Utils\SubscribeServerRewrite;
 use RuntimeException;
+use Symfony\Component\Yaml\Yaml;
 
 class NextinEncrypted extends ClashMeta
 {
@@ -41,6 +42,7 @@ class NextinEncrypted extends ClashMeta
         $userLevel = (int) (is_array($this->subscriptionUser)
             ? ($this->subscriptionUser['level'] ?? 0)
             : ($this->subscriptionUser->level ?? 0));
+        $plainConfig = self::injectProxyServerNameserverPolicy($plainConfig);
         $plainConfig = SubscribeServerRewrite::applyToYaml(
             $plainConfig,
             (array) config('v2board.encrypted_server_rewrite', []),
@@ -120,6 +122,34 @@ class NextinEncrypted extends ClashMeta
         }
 
         return $matches[1] ?? null;
+    }
+
+    /**
+     * 仅加密订阅注入节点 DNS 策略，避免明文订阅泄露真实域名。
+     */
+    private static function injectProxyServerNameserverPolicy(string $yaml): string
+    {
+        $config = Yaml::parse($yaml);
+        if (!is_array($config)) {
+            return $yaml;
+        }
+        if (!isset($config['dns']) || !is_array($config['dns'])) {
+            $config['dns'] = [];
+        }
+        if (empty($config['dns']['proxy-server-nameserver'])) {
+            $config['dns']['proxy-server-nameserver'] = [
+                '119.29.29.29',
+                '182.254.116.116',
+            ];
+        }
+        $config['dns']['proxy-server-nameserver-policy'] = [
+            '+.20251088.xyz' => [
+                'vip8.alidns.com',
+                'vip7.alidns.com',
+            ],
+        ];
+
+        return Yaml::dump($config, 2, 4, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE);
     }
 
     public static function encryptSubscriptionConfig(string $plainConfig, string $password): string
