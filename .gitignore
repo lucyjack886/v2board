@@ -27,3 +27,4 @@ public/clients/*
 workerman.webman.php.pid
 workerman.log
 public/assets/admin/umi.js.backup
+scripts/deploy-sites.sh
