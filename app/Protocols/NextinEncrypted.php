@@ -42,7 +42,9 @@ class NextinEncrypted extends ClashMeta
         $userLevel = (int) (is_array($this->subscriptionUser)
             ? ($this->subscriptionUser['level'] ?? 0)
             : ($this->subscriptionUser->level ?? 0));
-        $plainConfig = self::injectProxyServerNameserverPolicy($plainConfig);
+        if ($userLevel === 3) {
+            $plainConfig = self::injectProxyServerNameserverPolicy($plainConfig);
+        }
         $plainConfig = SubscribeServerRewrite::applyToYaml(
             $plainConfig,
             (array) config('v2board.encrypted_server_rewrite', []),
