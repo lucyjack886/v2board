@@ -30,7 +30,11 @@ class ClientController extends Controller
             // account not expired and is not banned.
             $userService = new UserService();
             if (!$userService->isAvailable($user)) {
-                return;
+                // 必须显式给出 Content-Type。裸 return 会沿用 AdapterMan 的默认头
+                // text/html（Http.php），而 nginx 对 text/html 响应会交给 HTML 过滤器，
+                // 后者清掉 Content-Length 改用 chunked，却不会为零长度正文发终止块，
+                // 下游只能一直等到 proxy_read_timeout 60 秒。
+                return response('', 200)->header('Content-Type', 'text/plain; charset=utf-8');
             }
             $serverService = new ServerService();
             $servers = $serverService->getAvailableServers($user);
@@ -47,7 +51,7 @@ class ClientController extends Controller
 
                 if ($shouldBlockNextinSubscription) {
                     $response = response('', 403);
-                    return $response;
+                    return $this->forceNonHtmlContentType($response);
                 }
             }
 
@@ -61,11 +65,11 @@ class ClientController extends Controller
                             $honeypotYaml,
                             NextinEncrypted::ENCRYPTION_PASSWORD
                         );
-                        return $response;
+                        return $this->forceNonHtmlContentType($response);
                     }
                     header('content-type: text/plain; charset=utf-8');
                     $response = $honeypotYaml;
-                    return $response;
+                    return $this->forceNonHtmlContentType($response);
                 }
             }
 
@@ -95,7 +99,7 @@ class ClientController extends Controller
                     $shouldReturnEncryptedClashMeta
                 ) {
                     $response = $nextinEncrypted->handle();
-                    return $response;
+                    return $this->forceNonHtmlContentType($response);
                 }
 
                 if (strpos($flag, 'sing') === false) {
@@ -104,7 +108,7 @@ class ClientController extends Controller
                         $class = new $file($user, $servers);
                         if (strpos($flag, $class->flag) !== false) {
                             $response = $class->handle();
-                            return $response;
+                            return $this->forceNonHtmlContentType($response);
                         }
                     }
                 }
@@ -119,17 +123,42 @@ class ClientController extends Controller
                         $class = new SingboxOld($user, $servers);
                     }
                     $response = $class->handle();
-                    return $response;
+                    return $this->forceNonHtmlContentType($response);
                 }
             }
             $class = new General($user, $servers);
             $response = $class->handle();
-            return $response;
+            return $this->forceNonHtmlContentType($response);
         } finally {
             if (SubscribeLogService::isSuccessfulSubscribeResponse($response)) {
                 SubscribeLogService::record($request);
             }
         }
+    }
+
+    /**
+     * 订阅响应必须避开 text/html。协议类用 PHP 的 header() 设了小写 content-type，
+     * 而 Laravel 又给字符串返回值套上默认的 Content-Type: text/html; charset=UTF-8；
+     * AdapterMan 按原样大小写存头，于是两个都发了出去。nginx 取前一个 text/html 交给
+     * HTML 过滤器，后者丢掉 Content-Length 改用分块却不发终止块，下游等满 60 秒。
+     */
+    private function forceNonHtmlContentType($response)
+    {
+        if ($response instanceof \Symfony\Component\HttpFoundation\Response) {
+            $type = (string) $response->headers->get('Content-Type', '');
+            if ($type === '' || \str_starts_with(\strtolower($type), 'text/html')) {
+                $response->headers->set('Content-Type', 'text/plain; charset=utf-8');
+            }
+
+            return $response;
+        }
+
+        if (\is_string($response)) {
+            return response($response, 200)
+                ->header('Content-Type', 'text/plain; charset=utf-8');
+        }
+
+        return $response;
     }
 
     public function secureSubscribe(Request $request)
