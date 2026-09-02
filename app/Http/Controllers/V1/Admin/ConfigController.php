@@ -118,6 +118,7 @@ class ConfigController extends Controller
                 'show_info_to_server_enable' => (int)config('v2board.show_info_to_server_enable', 0),
                 'show_subscribe_method' => (int)config('v2board.show_subscribe_method', 0),
                 'show_subscribe_expire' => (int)config('v2board.show_subscribe_expire', 5),
+                'secure_subscribe_ip_enable' => (int)config('v2board.secure_subscribe_ip_enable', 1),
                 'encrypted_server_rewrite' => config('v2board.encrypted_server_rewrite', []),
                 'plain_server_rewrite' => config('v2board.plain_server_rewrite', []),
                 'honeypot_subscribe_enable' => (int)config('v2board.honeypot_subscribe_enable', 0),

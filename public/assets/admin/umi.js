@@ -6031,6 +6031,12 @@
                     defaultValue: r.show_subscribe_expire,
                     onChange: e=>this.set("safe", "show_subscribe_expire", e.target.value)
                 })) : "", f.a.createElement(m, {
+                    title: "\u5b89\u5168\u8ba2\u9605 IP \u7ed1\u5b9a",
+                    description: "\u5f00\u542f\u540e\uff0c\u7528\u6237\u901a\u8fc7 ticket \u83b7\u53d6\u7684 secureSubscribe \u94fe\u63a5\u4ec5\u9650\u521b\u5efa\u65f6\u7684 IP \u62c9\u53d6\u3002\u5173\u95ed\u540e secureSubscribe \u4ecd\u53ef\u7528\uff0c\u4f46\u4e0d\u6821\u9a8c IP\u3002"
+                }, f.a.createElement(l["a"], {
+                    checked: parseInt(void 0 === r.secure_subscribe_ip_enable || null === r.secure_subscribe_ip_enable ? 1 : r.secure_subscribe_ip_enable),
+                    onChange: e=>this.set("subscribe", "secure_subscribe_ip_enable", e ? 1 : 0)
+                })), f.a.createElement(m, {
                     title: "\u52a0\u5bc6\u8ba2\u9605\u8282\u70b9 server \u66ff\u6362",
                     description: "\u4ec5\u5bf9\u547d\u4e2d\u52a0\u5bc6\u8ba2\u9605\u7684\u7528\u6237\u751f\u6548\uff0c\u8ba2\u9605\u751f\u6210\u540e\u5728\u52a0\u5bc6\u524d\u4f1a\u5c06\u8282\u70b9 server \u5b57\u6bb5\u505a\u5168\u91cf\u66ff\u6362\u3002\u6bcf\u884c\u4e00\u6761\u89c4\u5219\uff0c\u683c\u5f0f\uff1a\u6e90=>待观察(0)=>低风险(1)=>可信(2)=>核心可信(3)=>高风险(-1)=>严重风险(-2)=>蜜罐(-3)\uff0c\u4f8b\u5982\uff1a43.198.209.225=>18.183.238.0=>18.183.238.1=>18.183.238.2=>18.183.238.3=>18.183.238.4=>18.183.238.5=>127.0.0.1"
                 }, f.a.createElement("textarea", {

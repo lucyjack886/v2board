@@ -146,14 +146,6 @@ class UserController extends Controller
             ]);
             abort(403, 'ticket user mismatch');
         }
-        $submethod = (int)config('v2board.show_subscribe_method', 0);
-        if ($submethod !== 1) {
-            Log::error('secure_subscribe:invalid submethod', [
-                'user_id' => $userId,
-                'submethod' => $submethod,
-            ]);
-            abort(500, 'secure subscribe only supports otp mode');
-        }
         $user = User::find($userId);
         if (!$user) {
             Log::error('secure_subscribe:user not found', [
@@ -162,23 +154,22 @@ class UserController extends Controller
             abort(500, __('The user does not exist'));
         }
         $subscribeUrl = Helper::getSecureSubscribeUrl($user->token);
-        $externalToken = Cache::get("otp_{$user->token}");
-        if (!$externalToken) {
-            Log::error('secure_subscribe:external token missing', [
+        $ttl = Helper::getSecureSubscribeTokenTtl();
+        if ((int)config('v2board.secure_subscribe_ip_enable', 1)) {
+            $bindToken = Helper::extractSubscribeUrlToken($subscribeUrl);
+            if (empty($bindToken)) {
+                Log::error('secure_subscribe:bind token missing', [
+                    'user_id' => $userId,
+                ]);
+                abort(500, 'failed to create secure subscribe token');
+            }
+            $ip = Helper::getClientIp();
+            Cache::put("sub_ip:{$bindToken}", [
+                'ip' => $ip,
                 'user_id' => $userId,
-            ]);
-            abort(500, 'failed to create external token');
+                'created_at' => time()
+            ], $ttl);
         }
-        $ip = Helper::getClientIp();
-        $ttl = (int)config('v2board.secure_subscribe_ip_ttl', 300);
-        if ($ttl <= 0) {
-            $ttl = 300;
-        }
-        Cache::put("sub_ip:{$externalToken}", [
-            'ip' => $ip,
-            'user_id' => $userId,
-            'created_at' => time()
-        ], $ttl);
         return response([
             'data' => [
                 'url' => $subscribeUrl,

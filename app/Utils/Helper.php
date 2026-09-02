@@ -168,6 +168,26 @@ class Helper
         }
     }
 
+    public static function extractSubscribeUrlToken(?string $url): ?string
+    {
+        if (empty($url)) {
+            return null;
+        }
+        $query = parse_url($url, PHP_URL_QUERY);
+        if (empty($query)) {
+            return null;
+        }
+        parse_str($query, $params);
+        $token = $params['token'] ?? null;
+        return is_string($token) && $token !== '' ? $token : null;
+    }
+
+    public static function getSecureSubscribeTokenTtl(): int
+    {
+        $ttl = (int)config('v2board.secure_subscribe_ip_ttl', 300);
+        return $ttl > 0 ? $ttl : 300;
+    }
+
     public static function getSecureSubscribeUrl($token)
     {
         $submethod = (int)config('v2board.show_subscribe_method', 0);
@@ -176,7 +196,10 @@ class Helper
         $subscribeUrl = $subscribeUrls[rand(0, count($subscribeUrls) - 1)];
         switch ($submethod) {
             case 0:
-                $path = "{$path}?token={$token}";
+                // 永久模式下也不能把用户永久 token 放进安全订阅链接，改发短期一次性凭据
+                $newtoken = self::base64EncodeUrlSafe(random_bytes(24));
+                Cache::put("securesub_{$newtoken}", $token, self::getSecureSubscribeTokenTtl());
+                $path = "{$path}?token={$newtoken}";
                 if ($subscribeUrl) return $subscribeUrl . $path;
                 return url($path);
                 break;

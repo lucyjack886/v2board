@@ -54,6 +54,7 @@ class ConfigSave extends FormRequest
         'show_info_to_server_enable' => 'in:0,1',
         'show_subscribe_method' => 'in:0,1,2',
         'show_subscribe_expire' => 'nullable|integer',
+        'secure_subscribe_ip_enable' => 'in:0,1',
         'show_subscribe_url' => 'in:0,1',
         'encrypted_server_rewrite' => [
             'nullable',
