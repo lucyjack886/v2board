@@ -50,6 +50,10 @@ dns:
       - '+.google.com'
       - '+.facebook.com'
       - '+.youtube.com'
+      - '+.openai.com'
+      - '+.chatgpt.com'
+      - '+.oaistatic.com'
+      - '+.oaiusercontent.com'
 
 
 proxies:
@@ -253,6 +257,12 @@ rules:
   - DOMAIN-KEYWORD,blogspot,$app_name
   - DOMAIN-SUFFIX,youtu.be,$app_name
   - DOMAIN-KEYWORD,whatsapp,$app_name
+  - DOMAIN-SUFFIX,openai.com,$app_name
+  - DOMAIN-SUFFIX,chatgpt.com,$app_name
+  - DOMAIN-SUFFIX,oaistatic.com,$app_name
+  - DOMAIN-SUFFIX,oaiusercontent.com,$app_name
+  - DOMAIN-KEYWORD,openai,$app_name
+  - DOMAIN-KEYWORD,chatgpt,$app_name
 
   # 常见广告域名屏蔽
   - DOMAIN-KEYWORD,admarvel,REJECT
