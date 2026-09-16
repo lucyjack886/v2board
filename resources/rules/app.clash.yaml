@@ -200,6 +200,12 @@ rules:
   - DOMAIN-KEYWORD,blogspot,SELECT
   - DOMAIN-SUFFIX,youtu.be,SELECT
   - DOMAIN-KEYWORD,whatsapp,SELECT
+  - DOMAIN-SUFFIX,openai.com,SELECT
+  - DOMAIN-SUFFIX,chatgpt.com,SELECT
+  - DOMAIN-SUFFIX,oaistatic.com,SELECT
+  - DOMAIN-SUFFIX,oaiusercontent.com,SELECT
+  - DOMAIN-KEYWORD,openai,SELECT
+  - DOMAIN-KEYWORD,chatgpt,SELECT
 
   # 常见广告域名屏蔽
   - DOMAIN-KEYWORD,admarvel,REJECT
