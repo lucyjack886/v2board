@@ -3,7 +3,7 @@
 namespace App\Payments;
 
 class EPay {
-    
+    private $config;
     public function __construct($config)
     {
         if (isset($config['special_hosts']) && is_string($config['special_hosts'])) {

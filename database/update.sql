@@ -901,3 +901,6 @@ MODIFY `level` tinyint(4) NOT NULL DEFAULT 0 COMMENT '0:待观察 1:低风险 2:
 -- unpaid order mail: speed up status+created_at range scan
 ALTER TABLE `v2_order`
 ADD INDEX `idx_status_created_at` (`status`, `created_at`);
+
+ALTER TABLE `v2_server_v2node`
+ADD `trusted_x_forwarded_for` varchar(255) COLLATE 'utf8mb4_general_ci' NULL COMMENT '信任的x-forwarded-for头部' AFTER `network_settings`;
