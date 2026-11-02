@@ -314,10 +314,19 @@ class OrderService
         $this->user->transfer_enable = $plan->transfer_enable * 1073741824;
         $this->user->device_limit = $plan->device_limit;
 
-        // 续费且流量已用尽：按整月向上取整计算 N，并从当前起顺延
+        // 续费且流量已用尽
         if ($order->type === 2) {
             $used = $this->user->u + $this->user->d;
             if ($used >= $this->user->transfer_enable) {
+                $remainSeconds = (int)$this->user->expired_at - time();
+                // 剩余有效期不足 29 天：已用流量清零，从今天起算新周期
+                if ($remainSeconds < 29 * 86400) {
+                    $this->buyByResetTraffic();
+                    $this->user->plan_id = $plan->id;
+                    $this->user->group_id = $plan->group_id;
+                    $this->user->expired_at = $this->getTime($order->period, time());
+                    return;
+                }
                 $this->buyByResetTraffic();
                 $monthsPurchased = self::STR_TO_TIME[$order->period] ?? 0;
                 $nowTs = time();
