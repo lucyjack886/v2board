@@ -6037,25 +6037,19 @@
                     checked: parseInt(void 0 === r.secure_subscribe_ip_enable || null === r.secure_subscribe_ip_enable ? 1 : r.secure_subscribe_ip_enable),
                     onChange: e=>this.set("subscribe", "secure_subscribe_ip_enable", e ? 1 : 0)
                 })), f.a.createElement(m, {
-                    title: "\u52a0\u5bc6\u8ba2\u9605\u8282\u70b9 server \u66ff\u6362",
-                    description: "\u4ec5\u5bf9\u547d\u4e2d\u52a0\u5bc6\u8ba2\u9605\u7684\u7528\u6237\u751f\u6548\uff0c\u8ba2\u9605\u751f\u6210\u540e\u5728\u52a0\u5bc6\u524d\u4f1a\u5c06\u8282\u70b9 server \u5b57\u6bb5\u505a\u5168\u91cf\u66ff\u6362\u3002\u6bcf\u884c\u4e00\u6761\u89c4\u5219\uff0c\u683c\u5f0f\uff1a\u6e90=>待观察(0)=>低风险(1)=>可信(2)=>核心可信(3)=>高风险(-1)=>严重风险(-2)=>蜜罐(-3)\uff0c\u4f8b\u5982\uff1a43.198.209.225=>18.183.238.0=>18.183.238.1=>18.183.238.2=>18.183.238.3=>18.183.238.4=>18.183.238.5=>127.0.0.1"
+                    title: "\u8ba2\u9605\u8282\u70b9\u66ff\u6362",
+                    description: "\u52a0\u5bc6\u4e0e\u672a\u52a0\u5bc6\u8ba2\u9605\u5171\u7528\u8fd9\u4e00\u4efd JSON\u3002\u52a0\u5bc6\u5ba2\u6237\u7aef\u8bfb\u53d6 host_rules\uff0c\u672a\u52a0\u5bc6\u5ba2\u6237\u7aef\u8bfb\u53d6 host_rules_unencrypted\u3002\u6309\u539f\u59cb Host \u548c\u7528\u6237\u7b49\u7ea7\u5339\u914d\u540e\u66ff\u6362 host\uff1b\u914d\u7f6e\u4e86 port \u5219\u5f3a\u5236\u6539\u7aef\u53e3\uff0c\u672a\u914d\u7f6e\u5219\u4fdd\u6301\u539f\u7aef\u53e3\uff1bsni \u4e3a true \u65f6\u6309\u8282\u70b9 ID \u67e5\u8be2 sni_map \u66ff\u6362 SNI\uff0c\u4e3a false \u6216\u8282\u70b9\u6ca1\u6709\u6620\u5c04\u65f6\u4fdd\u7559\u539f SNI\u3002\u683c\u5f0f\u4e0d\u5408\u6cd5\u65f6\u4e0d\u4f1a\u4fdd\u5b58\u3002"
                 }, f.a.createElement("textarea", {
-                    rows: "4",
+                    key: "string" === typeof r.server_rewrite && r.server_rewrite || "object" === typeof r.server_rewrite && r.server_rewrite && !Array.isArray(r.server_rewrite) ? "server-rewrite-ready" : "server-rewrite-empty",
+                    rows: "16",
                     type: "text",
                     className: "form-control",
-                    placeholder: "43.198.209.225=>18.183.238.0=>18.183.238.1=>18.183.238.2=>18.183.238.3=>18.183.238.4=>18.183.238.5=>127.0.0.1",
-                    defaultValue: (Array.isArray(r.encrypted_server_rewrite) ? r.encrypted_server_rewrite : []).map(function(it){if(it&&it.rule)return it.rule;if(it&&it.targets&&it.targets.length)return(it.from||"")+"=>"+it.targets.join("=>");return((it&&it.from)?it.from:"")+"=>"+((it&&it.to)?it.to:"")}).join("\n"),
-                    onChange: e=>this.set("subscribe", "encrypted_server_rewrite", (e.target.value || "").split("\n").map(function(line){line=String(line).trim();if(!line)return null;var parts=line.split("=>").map(function(p){return p.trim()}).filter(function(p){return p});if(parts.length<2)return null;if(parts.length===2)return{from:parts[0],to:parts[1]};return{from:parts[0],targets:parts.slice(1)}}).filter(Boolean))
-                })), f.a.createElement(m, {
-                    title: "\u672a\u52a0\u5bc6\u8ba2\u9605\u8282\u70b9 server \u66ff\u6362",
-                    description: "\u4ec5\u5bf9\u975e BlueBird \u52a0\u5bc6\u8ba2\u9605\u751f\u6548\uff0c\u6309\u7528\u6237\u5206\u7ea7\u66ff\u6362\u8282\u70b9\u8fde\u63a5\u5730\u5740\uff08host\uff09\uff0c\u4e0d\u5f71\u54cd SNI/Host \u5934\u3002\u6bcf\u884c\u4e00\u6761\u89c4\u5219\uff0c\u683c\u5f0f\uff1a\u6e90=>待观察(0)=>低风险(1)=>可信(2)=>核心可信(3)=>高风险(-1)=>严重风险(-2)=>蜜罐(-3)\uff0c\u4f8b\u5982\uff1a18.167.134.166=>18.183.98.41=>0630.11151115.xyz=>0630.11151115.xyz=>0630.11151115.xyz=>18.183.98.42=>18.183.98.43=>127.0.0.1"
-                }, f.a.createElement("textarea", {
-                    rows: "4",
-                    type: "text",
-                    className: "form-control",
-                    placeholder: "18.167.134.166=>18.183.98.41=>0630.11151115.xyz=>0630.11151115.xyz=>0630.11151115.xyz=>18.183.98.42=>18.183.98.43=>127.0.0.1",
-                    defaultValue: (Array.isArray(r.plain_server_rewrite) ? r.plain_server_rewrite : []).map(function(it){if(it&&it.rule)return it.rule;if(it&&it.targets&&it.targets.length)return(it.from||"")+"=>"+it.targets.join("=>");return((it&&it.from)?it.from:"")+"=>"+((it&&it.to)?it.to:"")}).join("\n"),
-                    onChange: e=>this.set("subscribe", "plain_server_rewrite", (e.target.value || "").split("\n").map(function(line){line=String(line).trim();if(!line)return null;var parts=line.split("=>").map(function(p){return p.trim()}).filter(function(p){return p});if(parts.length<2)return null;if(parts.length===2)return{from:parts[0],to:parts[1]};return{from:parts[0],targets:parts.slice(1)}}).filter(Boolean))
+                    style: {
+                        fontFamily: "monospace"
+                    },
+                    placeholder: "{\n  \"1.1.1.1\": {\n    \"host_rules\": [{\"host\": \"example.com\", \"levels\": [0, 1], \"sni\": true}],\n    \"host_rules_unencrypted\": []\n  },\n  \"sni_map\": {\"3\": \"tw1.example.com\"}\n}",
+                    defaultValue: function(v){if(typeof v==="string")return v;if(!v||typeof v!=="object"||Array.isArray(v))return"";try{return JSON.stringify(v,null,2)}catch(err){return""}}(r.server_rewrite),
+                    onChange: e=>{var text=e.target.value||"";if(!String(text).trim()){this.set("subscribe","server_rewrite","");return}try{var parsed=JSON.parse(text);if(!parsed||typeof parsed!=="object"||Array.isArray(parsed))return;this.set("subscribe","server_rewrite",text)}catch(err){}}
                 })), f.a.createElement(m, {
                     title: "\u871c\u7f50\u8fdc\u7a0b\u8ba2\u9605\u914d\u7f6e",
                     description: "\u5f00\u542f\u540e\uff0c\u7528\u6237\u5206\u7ea7\u4e3a\u871c\u7f50(-3)\u65f6\u5c06\u76f4\u63a5\u4e0b\u53d1\u8fdc\u7a0b HTTPS Clash \u914d\u7f6e\uff08\u542b BlueBird \u52a0\u5bc6\uff09\u3002URL \u7559\u7a7a\u6216\u62c9\u53d6\u5931\u8d25\u65f6\u8d70\u73b0\u6709\u8282\u70b9\u66ff\u6362\u903b\u8f91\u3002"
@@ -16948,6 +16942,7 @@
                                     return "string" === typeof (null === (t = o.data.invite) || void 0 === t ? void 0 : t.commission_withdraw_method) && (o.data.invite.commission_withdraw_method = o.data.invite.commission_withdraw_method.split(",")),
                                     "string" === typeof (null === (i = o.data.site) || void 0 === i ? void 0 : i.email_whitelist_suffix) && (o.data.site.email_whitelist_suffix = o.data.site.email_whitelist_suffix.split(",")),
                                     "string" === typeof (null === (j = o.data.deposit) || void 0 === j ? void 0 : j.deposit_bounus) && (o.data.deposit.deposit_bounus = o.data.deposit.deposit_bounus.split(",")),
+                                    o.data.subscribe && o.data.subscribe.server_rewrite && "object" === typeof o.data.subscribe.server_rewrite && !Array.isArray(o.data.subscribe.server_rewrite) && (o.data.subscribe.server_rewrite = JSON.stringify(o.data.subscribe.server_rewrite, null, 2)),
                                     e.next = 13,
                                     r({
                                         type: "setState",

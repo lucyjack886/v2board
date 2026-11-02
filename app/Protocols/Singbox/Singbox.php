@@ -419,7 +419,7 @@ class Singbox
 
     protected function buildHysteria($password, $server, $user)
     {
-        $parts = array_map('trim', explode(',', $server['port']));
+        $parts = array_map('trim', explode(',', (string) $server['port']));
         $portConfig = [];
         
         // 检查是否为单端口
@@ -479,7 +479,7 @@ class Singbox
 
     protected function buildHysteria2($password, $server)
     {
-        $parts = explode(",",$server['port']);
+        $parts = explode(',', (string) $server['port']);
         $firstPart = $parts[0];
         if (strpos($firstPart, '-') !== false) {
             $range = explode('-', $firstPart);

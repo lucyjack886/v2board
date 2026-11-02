@@ -2,7 +2,6 @@
 
 namespace App\Protocols;
 
-use App\Utils\SubscribeServerRewrite;
 use RuntimeException;
 use Symfony\Component\Yaml\Yaml;
 
@@ -45,11 +44,6 @@ class NextinEncrypted extends ClashMeta
         if ($userLevel === 3) {
             $plainConfig = self::injectProxyServerNameserverPolicy($plainConfig);
         }
-        $plainConfig = SubscribeServerRewrite::applyToYaml(
-            $plainConfig,
-            (array) config('v2board.encrypted_server_rewrite', []),
-            $userLevel
-        );
         header('content-type: text/plain; charset=utf-8');
 
         return self::encryptSubscriptionConfig($plainConfig, self::ENCRYPTION_PASSWORD);

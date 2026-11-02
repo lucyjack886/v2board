@@ -119,8 +119,7 @@ class ConfigController extends Controller
                 'show_subscribe_method' => (int)config('v2board.show_subscribe_method', 0),
                 'show_subscribe_expire' => (int)config('v2board.show_subscribe_expire', 5),
                 'secure_subscribe_ip_enable' => (int)config('v2board.secure_subscribe_ip_enable', 1),
-                'encrypted_server_rewrite' => config('v2board.encrypted_server_rewrite', []),
-                'plain_server_rewrite' => config('v2board.plain_server_rewrite', []),
+                'server_rewrite' => config('v2board.server_rewrite', []),
                 'honeypot_subscribe_enable' => (int)config('v2board.honeypot_subscribe_enable', 0),
                 'honeypot_subscribe_url' => config('v2board.honeypot_subscribe_url', ''),
                 'honeypot_subscribe_token' => config('v2board.honeypot_subscribe_token', ''),
@@ -210,6 +209,9 @@ class ConfigController extends Controller
             if (array_key_exists($k, $data)) {
                 $config[$k] = $data[$k];
             }
+        }
+        if (array_key_exists('server_rewrite', $data)) {
+            unset($config['encrypted_server_rewrite'], $config['plain_server_rewrite']);
         }
         $data = var_export($config, 1);
         if (!File::put(base_path() . '/config/v2board.php', "<?php\n return $data ;")) {

@@ -196,7 +196,7 @@ class Surge
     //参考文档: https://manual.nssurge.com/policy/proxy.html
     public static function buildHysteria($password, $server)
     {
-        $parts = explode(",",$server['port']);
+        $parts = explode(',', (string) $server['port']);
         $firstPart = $parts[0];
         if (strpos($firstPart, '-') !== false) {
             $range = explode('-', $firstPart);

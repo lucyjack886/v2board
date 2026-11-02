@@ -56,11 +56,7 @@ class ConfigSave extends FormRequest
         'show_subscribe_expire' => 'nullable|integer',
         'secure_subscribe_ip_enable' => 'in:0,1',
         'show_subscribe_url' => 'in:0,1',
-        'encrypted_server_rewrite' => [
-            'nullable',
-            'array',
-        ],
-        'plain_server_rewrite' => [
+        'server_rewrite' => [
             'nullable',
             'array',
         ],
@@ -145,13 +141,8 @@ class ConfigSave extends FormRequest
                 }
             }
         };
-        $rules['encrypted_server_rewrite'][] = function ($attribute, $value, $fail) {
-            if (!is_array($value)) return;
-            \App\Utils\SubscribeServerRewrite::validateRules($value, $fail, '加密订阅节点替换');
-        };
-        $rules['plain_server_rewrite'][] = function ($attribute, $value, $fail) {
-            if (!is_array($value)) return;
-            \App\Utils\SubscribeServerRewrite::validateRules($value, $fail, '未加密订阅节点替换');
+        $rules['server_rewrite'][] = function ($attribute, $value, $fail) {
+            \App\Utils\SubscribeServerRewrite::validateConfig($value, $fail);
         };
         $rules['honeypot_subscribe_url'][] = function ($attribute, $value, $fail) {
             if ($value === null || $value === '') {
@@ -178,6 +169,35 @@ class ConfigSave extends FormRequest
             'secure_path.min' => '后台路径长度最小为8位',
             'secure_path.regex' => '后台路径只能为字母或数字',
             'honeypot_subscribe_url.url' => '蜜罐远程配置 URL 格式不正确，必须携带 https://',
+            'server_rewrite.array' => '订阅节点替换必须是 JSON 对象',
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        if (!$this->exists('server_rewrite')) {
+            return;
+        }
+        $value = $this->input('server_rewrite');
+        if ($value === null || $value === '') {
+            $this->merge(['server_rewrite' => []]);
+            return;
+        }
+        if (is_array($value)) {
+            $this->merge(['server_rewrite' => \App\Utils\SubscribeServerRewrite::normalizeConfig($value)]);
+            return;
+        }
+        if (!is_string($value)) {
+            return;
+        }
+        $trimmed = trim($value);
+        if ($trimmed === '') {
+            $this->merge(['server_rewrite' => []]);
+            return;
+        }
+        $decoded = json_decode($trimmed, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            $this->merge(['server_rewrite' => \App\Utils\SubscribeServerRewrite::normalizeConfig($decoded)]);
+        }
     }
 }

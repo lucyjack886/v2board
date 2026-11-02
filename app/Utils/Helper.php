@@ -471,7 +471,7 @@ class Helper
         $remote = self::formatHost($server['host']);
         $name = self::encodeURIComponent($server['name']);
 
-        $parts = explode(",", $server['port']);
+        $parts = explode(',', (string) $server['port']);
         $firstPort = strpos($parts[0], '-') !== false ? explode('-', $parts[0])[0] : $parts[0];
 
         $uri = $server['version'] == 2 ?
@@ -495,7 +495,7 @@ class Helper
         $remote = self::formatHost($server['host']);
         $name = self::encodeURIComponent($server['name']);
 
-        $parts = explode(",", $server['port']);
+        $parts = explode(',', (string) $server['port']);
         $firstPort = strpos($parts[0], '-') !== false ? explode('-', $parts[0])[0] : $parts[0];
         $tlsSettings = $server['tls_settings'] ?? [];
         $insecure = $tlsSettings['allow_insecure'] ?? 0;

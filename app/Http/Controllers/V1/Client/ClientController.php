@@ -73,21 +73,14 @@ class ClientController extends Controller
                 }
             }
 
-            $rewriteRules = $shouldReturnEncryptedClashMeta
-                ? (array) config('v2board.encrypted_server_rewrite', [])
-                : (array) config('v2board.plain_server_rewrite', []);
             $request->attributes->set(
                 'subscribe_rewrite_targets',
-                implode(',', SubscribeServerRewrite::collectAppliedTargets($servers, $rewriteRules, $userLevel))
-            );
-
-            if (!$shouldReturnEncryptedClashMeta) {
-                SubscribeServerRewrite::applyToServers(
+                implode(',', SubscribeServerRewrite::applyToServers(
                     $servers,
-                    (array) config('v2board.plain_server_rewrite', []),
+                    $shouldReturnEncryptedClashMeta,
                     $userLevel
-                );
-            }
+                ))
+            );
 
             if($flag) {
                 if ($shouldReturnEncryptedClashMeta || strpos($flag, 'sing') === false) {

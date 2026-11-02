@@ -231,7 +231,7 @@ class Loon
     public static function buildHysteria($password, $server)
     {
 
-        $parts = explode(",",$server['port']);
+        $parts = explode(',', (string) $server['port']);
         $firstPart = $parts[0];
         if (strpos($firstPart, '-') !== false) {
             $range = explode('-', $firstPart);

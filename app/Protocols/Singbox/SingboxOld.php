@@ -305,7 +305,7 @@ class SingboxOld
 
     protected function buildHysteria($password, $server, $user)
     {
-        $parts = explode(",",$server['port']);
+        $parts = explode(',', (string) $server['port']);
         $firstPart = $parts[0];
         if (strpos($firstPart, '-') !== false) {
             $range = explode('-', $firstPart);
@@ -352,7 +352,7 @@ class SingboxOld
 
     protected function buildHysteria2($password, $server, $user)
     {
-        $parts = explode(",",$server['port']);
+        $parts = explode(',', (string) $server['port']);
         $firstPart = $parts[0];
         if (strpos($firstPart, '-') !== false) {
             $range = explode('-', $firstPart);

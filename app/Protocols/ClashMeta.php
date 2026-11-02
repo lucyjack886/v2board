@@ -427,7 +427,7 @@ class ClashMeta
         $array['name'] = $server['name'];
         $array['server'] = $server['host'];
 
-        $parts = explode(",", $server['port']);
+        $parts = explode(',', (string) $server['port']);
         $firstPart = $parts[0];
         if (strpos($firstPart, '-') !== false) {
             $range = explode('-', $firstPart);
@@ -479,7 +479,7 @@ class ClashMeta
             'sni' => $tlsSettings['server_name'] ?? '',
             'udp' => true,
         ];
-        $parts = explode(",", $server['port']);
+        $parts = explode(',', (string) $server['port']);
         $firstPart = $parts[0];
         if (strpos($firstPart, '-') !== false) {
             $range = explode('-', $firstPart);
