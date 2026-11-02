@@ -42,9 +42,15 @@ class TicketController extends Controller
         if ($request->input('reply_status') !== NULL) {
             $model->whereIn('reply_status', $request->input('reply_status'));
         }
-        if ($request->input('email') !== NULL) {
-            $user = User::where('email', $request->input('email'))->first();
-            if ($user) $model->where('user_id', $user->id);
+        $email = trim((string) $request->input('email', ''));
+        if ($email !== '') {
+            $like = '%' . addcslashes($email, '\\%_') . '%';
+            $userIds = User::where('email', 'like', $like)->pluck('id');
+            if ($userIds->isEmpty()) {
+                $model->whereRaw('1 = 0');
+            } else {
+                $model->whereIn('user_id', $userIds);
+            }
         }
         $total = $model->count();
         $res = $model->forPage($current, $pageSize)
