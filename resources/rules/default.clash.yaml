@@ -30,6 +30,7 @@ dns:
   use-hosts: true
   respect-rules: true
   proxy-server-nameserver:
+    - system
     - 119.29.29.29
     - 182.254.116.116
   nameserver:

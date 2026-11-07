@@ -311,37 +311,36 @@ class OrderService
         if ((int)$order->type === 3) {
             $this->user->expired_at = time();
         }
+        $used = $this->user->u + $this->user->d;
+        $previousQuota = (int)$this->user->transfer_enable;
         $this->user->transfer_enable = $plan->transfer_enable * 1073741824;
         $this->user->device_limit = $plan->device_limit;
 
-        // 续费且流量已用尽
-        if ($order->type === 2) {
-            $used = $this->user->u + $this->user->d;
-            if ($used >= $this->user->transfer_enable) {
-                $remainSeconds = (int)$this->user->expired_at - time();
-                // 剩余有效期不足 29 天：已用流量清零，从今天起算新周期
-                if ($remainSeconds < 29 * 86400) {
-                    $this->buyByResetTraffic();
-                    $this->user->plan_id = $plan->id;
-                    $this->user->group_id = $plan->group_id;
-                    $this->user->expired_at = $this->getTime($order->period, time());
-                    return;
-                }
+        // 同套餐续费且当前流量已用尽。流量重置包不走这里。
+        if ((int)$order->type === 2 && $previousQuota > 0 && $used >= $previousQuota) {
+            $remainSeconds = (int)$this->user->expired_at - time();
+            // 剩余不足 29 天：覆盖套餐并清零流量，从今天起算，与首次购买一致
+            if ($remainSeconds < 29 * 86400) {
                 $this->buyByResetTraffic();
-                $monthsPurchased = self::STR_TO_TIME[$order->period] ?? 0;
-                $nowTs = time();
-                // 用过期时间减去当前时间，向上取整月数后减 1 个月
-                $monthsCeil = 1;
-                while (strtotime("+{$monthsCeil} month", $nowTs) < $this->user->expired_at) {
-                    $monthsCeil++;
-                }
-                $monthsToAdd = ($monthsCeil - 1) + $monthsPurchased;
-
                 $this->user->plan_id = $plan->id;
                 $this->user->group_id = $plan->group_id;
-                $this->user->expired_at = strtotime("+{$monthsToAdd} month", $nowTs); // 锚点=当前日号
+                $this->user->expired_at = $this->getTime($order->period, time());
                 return;
             }
+            $this->buyByResetTraffic();
+            $monthsPurchased = self::STR_TO_TIME[$order->period] ?? 0;
+            $nowTs = time();
+            // 用过期时间减去当前时间，向上取整月数后减 1 个月
+            $monthsCeil = 1;
+            while (strtotime("+{$monthsCeil} month", $nowTs) < $this->user->expired_at) {
+                $monthsCeil++;
+            }
+            $monthsToAdd = ($monthsCeil - 1) + $monthsPurchased;
+
+            $this->user->plan_id = $plan->id;
+            $this->user->group_id = $plan->group_id;
+            $this->user->expired_at = strtotime("+{$monthsToAdd} month", $nowTs); // 锚点=当前日号
+            return;
         }
         // 从一次性转换到循环
         if ($this->user->expired_at === NULL) $this->buyByResetTraffic();

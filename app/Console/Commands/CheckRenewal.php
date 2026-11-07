@@ -90,18 +90,28 @@ class CheckRenewal extends Command
                     $order->type = 2;
                     
                     $user->balance = $user->balance - $plan[$latestPeriod];
-                    // 流量用尽：清零并从当前时间按“向上取整月(N) - 1 + 购买周期”起算到期；否则沿用原到期顺延
-                    if (($user->u + $user->d) >= $user->transfer_enable) {
+                    $used = $user->u + $user->d;
+                    $previousQuota = (int)$user->transfer_enable;
+                    $remainSeconds = (int)$user->expired_at - time();
+                    // 流量用尽且剩余不足 29 天：覆盖套餐并清零，从今天起算，与首次购买一致
+                    if ($previousQuota > 0 && $used >= $previousQuota && $remainSeconds < 29 * 86400) {
+                        $user->u = 0;
+                        $user->d = 0;
+                        $user->transfer_enable = $plan->transfer_enable * 1073741824;
+                        $user->device_limit = $plan->device_limit;
+                        $user->speed_limit = $plan->speed_limit;
+                        $user->group_id = $plan->group_id;
+                        $user->expired_at = $this->getTime($latestPeriod, time());
+                    } elseif ($previousQuota > 0 && $used >= $previousQuota) {
                         $user->u = 0;
                         $user->d = 0;
                         $monthsPurchased = OrderService::STR_TO_TIME[$latestPeriod] ?? 0;
                         $nowTs = time();
-                        // 以 now 为锚点，逐月累加直到 >= expired_at，实现向上取整月数
                         $monthsCeil = 1;
                         while (strtotime("+{$monthsCeil} month", $nowTs) < $user->expired_at) {
                             $monthsCeil++;
                         }
-                        $monthsToAdd = ($monthsCeil - 1) + $monthsPurchased; // N-1 + 购买周期
+                        $monthsToAdd = ($monthsCeil - 1) + $monthsPurchased;
                         $user->expired_at = strtotime("+{$monthsToAdd} month", $nowTs);
                     } else {
                         $user->expired_at = $this->getTime($latestPeriod, $user->expired_at);
